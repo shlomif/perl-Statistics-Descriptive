@@ -1,0 +1,12 @@
+Build.PL
+Changes
+MANIFEST
+README
+lib/Statistics/Descriptive.pm
+t/00-load.t
+t/descr.t
+t/pod-coverage.t
+t/pod.t
+UserSurvey.txt
+Makefile.PL
+META.yml
