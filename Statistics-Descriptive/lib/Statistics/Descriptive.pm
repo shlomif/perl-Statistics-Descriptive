@@ -1,18 +1,21 @@
 package Statistics::Descriptive;
 
+use strict;
+use warnings;
+
 ##This module draws heavily from perltoot v0.4 from Tom Christiansen.
 
 require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
 		  ##Not only that, but it's the latest "safe" version of
 		  ##Perl5.  01-03 weren't bug free.
+use vars (qw($VERSION $Tolerance));
+
 $VERSION = '2.6';
 
 $Tolerance = 0.0;
 
-use POSIX qw/ceil/;
-
 package Statistics::Descriptive::Sparse;
-use strict;
+
 use vars qw($VERSION $AUTOLOAD %fields);
 use Carp;
 
@@ -109,7 +112,9 @@ sub AUTOLOAD {
 package Statistics::Descriptive::Full;
 
 use Carp;
-use strict;
+
+use POSIX ();
+
 use vars qw(@ISA $a $b %fields);
 
 @ISA = qw(Statistics::Descriptive::Sparse);
