@@ -3,43 +3,52 @@
 use strict;
 use warnings;
 
-use Benchmark;
+# Should be 14.
+use Test::More tests => 14;
 
+use Benchmark;
 use Statistics::Descriptive;
 
-print "1..14\n";
-
-my $testct = 1;
+# print "1..14\n";
 
 # test #1
 
 my $stat = Statistics::Descriptive::Full->new();
 my @results = $stat->least_squares_fit();
-print ( (@results? 'not ': '' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+ok (!scalar(@results), "Results on an non-filled object are empty.");
 
 # test #2
 # data are y = 2*x - 1
 
 $stat->add_data( 1, 3, 5, 7 );
 @results = $stat->least_squares_fit();
-my $ok = ( $results[0] == -1 ) && ( $results[1] == 2 );
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+is_deeply (
+    [@results[0..1]],
+    [-1, 2],
+    "least_squares_fit returns the correct result."
+);
 
 # test #3
 # test error condition on harmonic mean : one element zero
 $stat = Statistics::Descriptive::Full->new();
 $stat->add_data( 1.1, 2.9, 4.9, 0.0 );
 my $single_result = $stat->harmonic_mean();
-$ok = ! defined( $single_result );
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+ok (!defined($single_result),
+    "harmonic_mean is undefined if there's a 0 datum."
+);
 
 # test #4
 # test error condition on harmonic mean : sum of elements zero
 $stat = Statistics::Descriptive::Full->new();
 $stat->add_data( 1.0, -1.0 );
 $single_result = $stat->harmonic_mean();
-$ok = ! defined( $single_result );
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+ok (!defined($single_result),
+    "harmonic_mean is undefined if the sum of the reciprocals is zero."
+);
 
 # test #5
 # test error condition on harmonic mean : sum of elements near zero
@@ -48,8 +57,10 @@ my $savetol = $Statistics::Descriptive::Tolerance;
 $Statistics::Descriptive::Tolerance = 0.1;
 $stat->add_data( 1.01, -1.0 );
 $single_result = $stat->harmonic_mean();
-$ok = ! defined( $single_result );
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+ok (! defined( $single_result ),
+    "test error condition on harmonic mean : sum of elements near zero"
+);
 
 $Statistics::Descriptive::Tolerance = $savetol;
 
@@ -58,8 +69,10 @@ $Statistics::Descriptive::Tolerance = $savetol;
 $stat = Statistics::Descriptive::Full->new();
 $stat->add_data( 1,2,3 );
 $single_result = $stat->harmonic_mean();
-$ok = defined( $single_result ) && abs( $single_result - 1.6363 ) < 0.001;
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+ok (scalar(abs( $single_result - 1.6363 ) < 0.001),
+    "test normal function of harmonic mean",
+);
 
 # test #7
 # test stringification of hash keys in frequency distribution
@@ -70,18 +83,21 @@ $stat->add_data(0.1,
                1/3);
 my %f = $stat->frequency_distribution(2);
 
-$ok = ($f{0.216666666666667} == 3) &&
-      ($f{0.333333333333333} == 1);
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+ok ((($f{0.216666666666667} == 3) &&
+      ($f{0.333333333333333} == 1)),
+    "test stringification of hash keys in frequency distribution"
+);
 
 # test #8
 ##Test memorization of last frequency distribution
 my %g = $stat->frequency_distribution();
-$ok = 1;
-foreach my $key (keys %f) {
-  $ok = 0 if $f{$key} != $g{$key};
-}
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+is_deeply(
+    \%f,
+    \%g,
+    "memorization of last frequency distribution"
+);
 
 # test #9
 # test the frequency distribution with specified bins
@@ -99,32 +115,49 @@ $stat->add_data(23.92,
                 74.40);
 %f = $stat->frequency_distribution(\@freq_bins);
 
-$ok = ($f{20} == 3) &&
+# TEST
+ok (
+    (($f{20} == 3) &&
       ($f{40} == 5) &&
       ($f{60} == 1) &&
       ($f{80} == 1) &&
-      ($f{100} == 0);
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+      ($f{100} == 0)
+    ),
+    "test the frequency distribution with specified bins"
+);
 
 # test #10 and #11
 # Test the percentile function and caching
 $stat = Statistics::Descriptive::Full->new();
 $stat->add_data(-5,-2,4,7,7,18);
 ##Check algorithm
-$ok =  ( $stat->percentile(50) == 4 );
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
-$ok =  ( $stat->percentile(25) == -2 );
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+is ($stat->percentile(50),
+    4,
+    "percentile function and caching - 1",
+);
+# TEST
+is ($stat->percentile(25),
+    -2,
+    "percentile function and caching - 2",
+);
 
 # tests #12 and #13
 # Check correct parsing of method parameters
 $stat = Statistics::Descriptive::Full->new();
 $stat->add_data(1,2,3,4,5,6,7,8,9,10);
-$ok = ($stat->trimmed_mean(0.1,0.1) == $stat->trimmed_mean(0.1));
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+is(
+    $stat->trimmed_mean(0.1,0.1),
+    $stat->trimmed_mean(0.1),
+    "correct parsing of method parameters",
+);
 
-$ok = ($stat->trimmed_mean(0.1,0) == 6);
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+is ($stat->trimmed_mean(0.1,0),
+    6,
+    "correct parsing of method parameters - 2",
+);
 
 # tests #14
 # Make sure that trimmed_mean caching works but checking execution times
@@ -145,5 +178,7 @@ foreach (0..1) {
   push @t, $td->cpu_p();
 }
 
-$ok = $t[1] < $t[0];
-print ( ($ok? '': 'not ' ) . 'ok ' . $testct++ . "\n" );
+# TEST
+ok ($t[1] < $t[0],
+    "trimmed_mean caching works",
+);
