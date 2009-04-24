@@ -20,6 +20,7 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup      => [ 'Statistics-Descriptive-*' ],
     create_makefile_pl => 'traditional',
+    PL_files => {},
 );
 
 $builder->create_build_script();

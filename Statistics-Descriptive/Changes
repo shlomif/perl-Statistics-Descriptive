@@ -1,7 +1,22 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+    - Converted the distribution to Build.PL and re-organized it to
+    put everything under its proper place. Started maintaining it in:
+        - http://svn.berlios.de/svnroot/repos/web-cpan/Statistics-Descriptive/
+
+    - Converted t/descr.t to use "use strict;" and "use warnings;".
+    
+    - Converted t/descr.t to use Test::More.
+
+    - Cleaned up the "use" statement of lib/Statistics/Descriptive.pm.
+
+    - Added more explicit dependencies (core, though) to Build.PL. 
+
+    - Fixed RT bug #34999: freq distribution generated too many bins.
+        - https://rt.cpan.org/Ticket/Display.html?id=34999
+
 2.6   October 10, 2002
-        - Fixed caching in trimmed mean and modified code to allow trimming
+    - Fixed caching in trimmed mean and modified code to allow trimming
 	  0% from upper bound.  Formerly if 0 was requested then it used the
 	  lower bound!
 
