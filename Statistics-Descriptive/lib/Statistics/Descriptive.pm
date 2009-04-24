@@ -329,11 +329,12 @@ sub frequency_distribution {
     if (@k > 1) {
       ##Check for monotonicity
       $element = $k[0];
-      for (@k[1..$#k]) {
-	if ($element > $_) {
-	  carp "Non monotonic array cannot be used as frequency bins!\n";
-	  return undef;
-	}
+      for my $next_elem (@k[1..$#k]) {
+        if ($element > $next_elem) {
+          carp "Non monotonic array cannot be used as frequency bins!\n";
+          return undef;
+        }
+        $element = $next_elem;
       }
     }
     %bins = map { $_ => 0 } @k;
@@ -341,10 +342,8 @@ sub frequency_distribution {
   else {
     return undef unless $partitions >= 1;
     my $interval = $self->{sample_range}/$partitions;
-    my $iter = $self->{min};
-    while (($iter += $interval) <  $self->{max}) {
-      $bins{$iter} = 0;
-      push @k, $iter;  ##Keep the "keys" unstringified
+    foreach my $idx (1 .. ($partitions-1)) {
+        push @k, ($self->{min} + $idx * $interval);
     }
     $bins{$self->{max}} = 0;
     push @k, $self->{max};

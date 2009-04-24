@@ -1,12 +1,13 @@
 Build.PL
 Changes
-MANIFEST
-README
 lib/Statistics/Descriptive.pm
+Makefile.PL
+MANIFEST
+META.yml
+README
 t/00-load.t
 t/descr.t
+t/freq_distribution-1-rt-34999.t
 t/pod-coverage.t
 t/pod.t
 UserSurvey.txt
-Makefile.PL
-META.yml
