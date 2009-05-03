@@ -15,6 +15,16 @@ Revision history for Perl extension Statistics::Descriptive.
     - Fixed RT bug #34999: freq distribution generated too many bins.
         - https://rt.cpan.org/Ticket/Display.html?id=34999
 
+    - Added some keywords and resources to the META.yml, using Build.PL's
+    meta_merge.
+
+    - Fixed: https://rt.cpan.org/Ticket/Display.html?id=32183 
+        - more authoritative (and non-broken) link to the RFC.
+
+    - Applied the patch in https://rt.cpan.org/Ticket/Display.html?id=9160 
+        - {{#9160: Variance and Standard Deviation use costly pseudo-variance, 
+        instead of computing real variance}}.
+
 2.6   October 10, 2002
     - Fixed caching in trimmed mean and modified code to allow trimming
 	  0% from upper bound.  Formerly if 0 was requested then it used the
