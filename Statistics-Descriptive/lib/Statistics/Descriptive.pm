@@ -611,7 +611,7 @@ resolution of the sample.
 I<RFC2330 - Framework for IP Performance Metrics>,
 Section 11.3.  Defining Statistical Distributions.
 RFC2330 is available from:
-http://www.cis.ohio-state.edu/htbin/rfc/rfc2330.html.)
+L<http://www.ietf.org/rfc/rfc2330.txt> .)
 
 If the percentile method is called in a list context then it will
 also return the index of the percentile.
