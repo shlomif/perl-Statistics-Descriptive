@@ -21,6 +21,27 @@ my $builder = Module::Build->new(
     add_to_cleanup      => [ 'Statistics-Descriptive-*' ],
     create_makefile_pl => 'traditional',
     PL_files => {},
+    meta_merge =>
+    {
+        resources =>
+        {
+            repository => "http://svn.berlios.de/svnroot/repos/web-cpan/Statistics-Descriptive/",
+            homepage => "http://web-cpan.berlios.de/modules/Statistics-Descriptive/",
+        },
+        keywords =>
+        [
+            qw(
+                average
+                distribution
+                mean
+                median
+                statistics
+                stats
+                stddev
+            ),
+            "standard deviation"
+        ],
+    },
 );
 
 $builder->create_build_script();
