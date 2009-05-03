@@ -10,13 +10,13 @@ require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
 		  ##Perl5.  01-03 weren't bug free.
 use vars (qw($VERSION $Tolerance));
 
-$VERSION = '2.6';
+$VERSION = '2.7';
 
 $Tolerance = 0.0;
 
 package Statistics::Descriptive::Sparse;
 
-use vars qw($VERSION $AUTOLOAD %fields);
+use vars qw($AUTOLOAD %fields);
 use Carp;
 
 ##Define the fields to be used as methods

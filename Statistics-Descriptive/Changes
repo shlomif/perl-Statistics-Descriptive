@@ -1,5 +1,7 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+2.7   May 03, 2009
+
     - Converted the distribution to Build.PL and re-organized it to
     put everything under its proper place. Started maintaining it in:
         - http://svn.berlios.de/svnroot/repos/web-cpan/Statistics-Descriptive/
@@ -18,7 +20,7 @@ Revision history for Perl extension Statistics::Descriptive.
     - Added some keywords and resources to the META.yml, using Build.PL's
     meta_merge.
 
-    - Fixed: https://rt.cpan.org/Ticket/Display.html?id=32183 
+    - Fixed https://rt.cpan.org/Ticket/Display.html?id=32183 
         - more authoritative (and non-broken) link to the RFC.
 
     - Applied the patch in https://rt.cpan.org/Ticket/Display.html?id=9160 
