@@ -24,13 +24,12 @@ use Carp;
   count			=> 0,
   mean			=> 0,
   sum			=> 0,
+  sumsq			=> 0,
   variance		=> undef,
-  pseudo_variance	=> 0,
   min			=> undef,
   max			=> undef,
   mindex		=> undef,
   maxdex		=> undef,
-  standard_deviation	=> undef,
   sample_range		=> undef,
   );
 
@@ -48,7 +47,7 @@ sub new {
 sub add_data {
   my $self = shift;  ##Myself
   my $oldmean;
-  my ($min,$mindex,$max,$maxdex);
+  my ($min,$mindex,$max,$maxdex,$sum,$sumsq,$count);
   my $aref;
 
   if (ref $_[0] eq 'ARRAY') {
@@ -58,39 +57,82 @@ sub add_data {
     $aref = \@_;
   }
 
+  ##If we were given no data, we do nothing.
+  return 1 if (!@{ $aref });
+
   ##Take care of appending to an existing data set
   $min    = (defined ($self->{min}) ? $self->{min} : $aref->[0]);
   $max    = (defined ($self->{max}) ? $self->{max} : $aref->[0]);
   $maxdex = $self->{maxdex} || 0;
   $mindex = $self->{mindex} || 0;
+  $sum = $self->{sum};
+  $sumsq = $self->{sumsq};
+  $count = $self->{count};
 
-  ##Calculate new mean, pseudo-variance, min and max;
+  ##Calculate new mean, sumsq, min and max;
   foreach ( @{ $aref } ) {
-    $oldmean = $self->{mean};
-    $self->{sum} += $_;
-    $self->{count}++;
+    $sum += $_;
+    $sumsq += $_**2;
+    $count++;
     if ($_ >= $max) {
       $max = $_;
-      $maxdex = $self->{count}-1;
+      $maxdex = $count-1;
     }
     if ($_ <= $min) {
       $min = $_;
-      $mindex = $self->{count}-1;
+      $mindex = $count-1;
     }
-    $self->{mean} += ($_ - $oldmean) / $self->{count};
-    $self->{pseudo_variance} += ($_ - $oldmean) * ($_ - $self->{mean});
   }
 
   $self->{min}          = $min;
   $self->{mindex}       = $mindex;
   $self->{max}          = $max;
   $self->{maxdex}       = $maxdex;
-  $self->{sample_range} = $self->{max} - $self->{min};
-  if ($self->{count} > 1) {
-    $self->{variance}     = $self->{pseudo_variance} / ($self->{count} -1);
-    $self->{standard_deviation}  = sqrt( $self->{variance});
-  }
+  $self->{sample_range} = $max - $min;
+  $self->{sum}		= $sum;
+  $self->{sumsq}	= $sumsq;
+  $self->{mean}		= $sum / $count;
+  $self->{count}	= $count;
+  ##indicator the value is not cached.  Variance isn't commonly enough
+  ##used to recompute every single data add.
+  $self->{variance}	= undef;
   return 1;
+}
+
+sub standard_deviation {
+  my $self = shift;  ##Myself
+  return undef if (!$self->{count});
+  return sqrt(variance($self));
+}
+
+##Return variance; if needed, compute and cache it.
+sub variance {
+  my $self = shift;  ##Myself
+  my $div = @_ ? 0 : 1;
+  my $count = $self->{count};
+  if ($count < 1 + $div) {
+      return 0;
+  }
+
+  my $variance = $self->{variance};
+  if (!defined($variance)) {
+    $variance = ($self->{sumsq} - $count * $self->{mean}**2);
+    $variance /= $count - $div;
+    $self->{variance} = $variance;
+  }
+  return $variance;
+}
+
+##Clear a stat.  More efficient than destroying an object and calling
+##new.
+sub clear {
+  my $self = shift;  ##Myself
+  my $key;
+
+  return if (!$self->{count});
+  while (my($field, $value) = each %fields) {
+    $self->{$field} = $value;
+  }
 }
 
 sub AUTOLOAD {
@@ -138,6 +180,27 @@ sub new {
   $self->{presorted} = 0;
   bless ($self, $class);  #Re-anneal the object
   return $self;
+}
+
+##Clear a stat.  More efficient than destroying an object and calling
+##new.
+sub clear {
+  my $self = shift;  ##Myself
+  my $key;
+
+  return if (!$self->{count});
+  foreach $key (keys %{ $self }) { # Check each key in the object
+    # If it's a reserved key for this class, keep it
+    next if exists $self->{'_reserved'}->{$key};
+    # If it comes from the base class, keep it
+    next if exists $self->{'_permitted'}->{$key};
+    delete $self->{$key};          # Delete the out of date cached key
+  }
+  $self->SUPER::clear();
+  if (exists($self->{data})) {
+    $self->{data} = [];
+    $self->{presorted} = 0;
+  }
 }
 
 sub add_data {
@@ -470,6 +533,16 @@ calls with the same arguments are faster.
 =item $stat = Statistics::Descriptive::Sparse->new();
 
 Create a new sparse statistics object.
+
+=item $stat->clear();
+
+Effectively the same as
+
+  my $class = ref($stat);
+  undef $stat;
+  $stat = new $class;
+
+except more efficient.
 
 =item $stat->add_data(1,2,3);
 
