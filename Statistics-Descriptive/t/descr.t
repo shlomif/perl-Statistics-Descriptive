@@ -116,14 +116,16 @@ $stat->add_data(23.92,
 %f = $stat->frequency_distribution(\@freq_bins);
 
 # TEST
-ok (
-    (($f{20} == 3) &&
-      ($f{40} == 5) &&
-      ($f{60} == 1) &&
-      ($f{80} == 1) &&
-      ($f{100} == 0)
-    ),
-    "test the frequency distribution with specified bins"
+is_deeply(
+    \%f,
+    {
+        20 => 3,
+        40 => 5,
+        60 => 1,
+        80 => 1,
+        100 => 0,
+    },
+    "Test the frequency distribution with specified bins"
 );
 
 # test #10 and #11
