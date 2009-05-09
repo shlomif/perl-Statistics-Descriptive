@@ -1,5 +1,10 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+    - Enabled "./Build runtest" and "./Build distruntest" (using Test::Run)
+    in the distribution.
+
+    - Fixed incomplete/broken tests in t/descr.t.
+
 2.7   May 03, 2009
 
     - Converted the distribution to Build.PL and re-organized it to

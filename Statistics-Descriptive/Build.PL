@@ -1,14 +1,18 @@
 use strict;
 use warnings;
-use Module::Build;
 
-my $builder = Module::Build->new(
+use lib "./inc";
+
+use Test::Run::Builder;
+
+my $builder = Test::Run::Builder->new(
     module_name         => 'Statistics::Descriptive',
     license             => 'perl',
     dist_author         => 'Shlomi Fish <shlomif@iglu.org.il>',
     dist_version_from   => 'lib/Statistics/Descriptive.pm',
     build_requires => {
         'Benchmark' => 0,
+        'lib' => 0,
         'Test::More' => 0,
     },
     requires => {
