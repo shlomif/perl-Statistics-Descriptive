@@ -3,6 +3,7 @@ Revision history for Perl extension Statistics::Descriptive.
     - Fixed bug https://rt.cpan.org/Public/Bug/Display.html?id=46026 :
         - standard_deviation failing due to a variance that got evaluated
         to 0 due to rounding errors.
+    - Kwalitee : added a LICENSE section to the POD.
 
 2.8   May 09, 2009
 

@@ -10,7 +10,7 @@ require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
 		  ##Perl5.  01-03 weren't bug free.
 use vars (qw($VERSION $Tolerance));
 
-$VERSION = '2.8';
+$VERSION = '2.9';
 
 $Tolerance = 0.0;
 
@@ -869,6 +869,11 @@ same terms as Perl itself.
 Copyright (c) 1994,1995 Jason Kastner. All rights
 reserved.  This program is free software; you can redistribute it
 and/or modify it under the same terms as Perl itself.
+
+=head1 LICENSE
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =head1 REVISION HISTORY
 
