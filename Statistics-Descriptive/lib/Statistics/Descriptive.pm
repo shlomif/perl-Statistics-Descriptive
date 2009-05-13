@@ -117,7 +117,20 @@ sub variance {
   my $variance = $self->{variance};
   if (!defined($variance)) {
     $variance = ($self->{sumsq} - $count * $self->{mean}**2);
+
+    # Sometimes due to rounding errors we get a number below 0.
+    # This makes sure this is handled as gracefully as possible.
+    #
+    # See:
+    #
+    # https://rt.cpan.org/Public/Bug/Display.html?id=46026
+    if ($variance < 0)
+    {
+        $variance = 0;
+    }
+
     $variance /= $count - $div;
+
     $self->{variance} = $variance;
   }
   return $variance;

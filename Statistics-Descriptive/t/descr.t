@@ -3,8 +3,7 @@
 use strict;
 use warnings;
 
-# Should be 14.
-use Test::More tests => 14;
+use Test::More tests => 16;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -61,6 +60,20 @@ EOF
 
     ok($success, $blurb);
 }
+
+sub is_between
+{
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    
+    my ($have, $want_bottom, $want_top, $blurb) = @_;
+
+    ok (
+        (($have >= $want_bottom) &&
+        ($want_top >= $have)),
+        $blurb
+    );
+}
+
 # print "1..14\n";
 
 # test #1
@@ -239,3 +252,24 @@ foreach (0..1) {
 ok ($t[1] < $t[0],
     "trimmed_mean caching works",
 );
+
+{
+    my $stat = Statistics::Descriptive::Full->new();
+
+    $stat->add_data((0.001) x 6);
+
+    # TEST
+    is_between ($stat->variance(),
+        0,
+        0.00001,
+        "Workaround to avoid rounding errors that yield negative variance."
+    );
+
+    # TEST
+    is_between ($stat->standard_deviation(),
+        0,
+        0.00001,
+        "Workaround to avoid rounding errors that yield negative std-dev."
+    );
+}
+
