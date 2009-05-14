@@ -94,7 +94,7 @@ sub add_data {
   $mindex = $self->{mindex} || 0;
   $sum = $self->sum();
   $sumsq = $self->sumsq();
-  $count = $self->{count};
+  $count = $self->count();
 
   ##Calculate new mean, sumsq, min and max;
   foreach ( @{ $aref } ) {
@@ -119,7 +119,7 @@ sub add_data {
   $self->sum($sum);
   $self->sumsq($sumsq);
   $self->{mean}		= $sum / $count;
-  $self->{count}	= $count;
+  $self->count($count);
   ##indicator the value is not cached.  Variance isn't commonly enough
   ##used to recompute every single data add.
   $self->{variance}	= undef;
@@ -128,7 +128,7 @@ sub add_data {
 
 sub standard_deviation {
   my $self = shift;  ##Myself
-  return undef if (!$self->{count});
+  return undef if (!$self->count());
   return sqrt(variance($self));
 }
 
@@ -136,7 +136,7 @@ sub standard_deviation {
 sub variance {
   my $self = shift;  ##Myself
   my $div = @_ ? 0 : 1;
-  my $count = $self->{count};
+  my $count = $self->count();
   if ($count < 1 + $div) {
       return 0;
   }
@@ -169,7 +169,7 @@ sub clear {
   my $self = shift;  ##Myself
   my $key;
 
-  return if (!$self->{count});
+  return if (!$self->count());
   while (my($field, $value) = each %fields) {
     $self->{$field} = $value;
   }
@@ -214,7 +214,7 @@ sub clear {
   my $self = shift;  ##Myself
   my $key;
 
-  return if (!$self->{count});
+  return if (!$self->count());
   foreach $key (keys %{ $self }) { # Check each key in the object
     # If it's a reserved key for this class, keep it
     next if exists $self->{'_reserved'}->{$key};
@@ -291,7 +291,7 @@ sub percentile {
   ##If the requested percentile is less than the "percentile bin
   ##size" then return undef.  Check description of RFC 2330 in the
   ##POD below.
-  my $count = $self->{'count'};
+  my $count = $self->count();
   return undef if $percentile < 100 / $count;
 
   $self->sort_data() unless $self->{'presorted'};
@@ -309,7 +309,7 @@ sub median {
   return $self->{median} if defined $self->{median};
 
   $self->sort_data() unless $self->{'presorted'};
-  my $count = $self->{count};
+  my $count = $self->count();
   if ($count % 2) {   ##Even or odd
     return $self->{median} = @{ $self->{data} }[($count-1)/2];
   }
@@ -334,13 +334,13 @@ sub trimmed_mean {
   my $thistm = join ':','tm',$lower,$upper;
   return $self->{$thistm} if defined $self->{$thistm};
 
-  my $lower_trim = int ($self->{count}*$lower); 
-  my $upper_trim = int ($self->{count}*$upper); 
+  my $lower_trim = int ($self->count()*$lower); 
+  my $upper_trim = int ($self->count()*$upper); 
   my ($val,$oldmean) = (0,0);
   my ($tm_count,$tm_mean,$index) = (0,0,$lower_trim);
 
   $self->sort_data() unless $self->{'presorted'};
-  while ($index <= $self->{count} - $upper_trim -1) {
+  while ($index <= $self->count() - $upper_trim -1) {
     $val = @{ $self->{data} }[$index];
     $oldmean = $tm_mean;
     $index++;
@@ -362,7 +362,7 @@ sub harmonic_mean {
   }
   return $self->{harmonic_mean} = undef
     unless abs($hs) > $Statistics::Descriptive::Tolerance;
-  return $self->{harmonic_mean} = $self->{count}/$hs;
+  return $self->{harmonic_mean} = $self->count()/$hs;
 }
 
 sub mode {
@@ -391,7 +391,7 @@ sub geometric_mean {
   my $self = shift;
   return $self->{geometric_mean} if defined $self->{geometric_mean};
   my $gm = 1;
-  my $exponent = 1/$self->{count};
+  my $exponent = 1/$self->count();
   for (@{ $self->{data} }) {
     return undef if $_ < 0;
     $gm *= $_**$exponent;
@@ -403,7 +403,7 @@ sub frequency_distribution {
   my $self = shift;
   my $element;
   my @k = ();
-  return undef if $self->{count} < 2; #Must have at least two elements
+  return undef if $self->count() < 2; #Must have at least two elements
 
   ##Cache
   return %{$self->{frequency}}
@@ -451,7 +451,7 @@ sub frequency_distribution {
 
 sub least_squares_fit {
   my $self = shift;
-  return () if $self->{count} < 2;
+  return () if $self->count() < 2;
 
   ##Sigma sums
   my ($sigmaxy, $sigmax, $sigmaxx, $sigmayy, $sigmay) = (0,0,0,0,$self->sum);
@@ -459,18 +459,18 @@ sub least_squares_fit {
 
   ##Work variables
   my ($iter,$y,$x,$denom) = (0,0,0,0);
-  my $count = $self->{count};
+  my $count = $self->count();
   my @x;
 
   ##Outputs
   my ($m, $q, $r, $rms);
 
   if (!defined $_[1]) {
-    @x = 1..$self->{count};
+    @x = 1..$self->count();
   }
   else {
     @x = @_;
-    if ( $self->{count} != scalar @x) {
+    if ( $self->count() != scalar @x) {
       carp "Range and domain are of unequal length.";
       return ();
     }
