@@ -98,8 +98,15 @@ sub add_data {
       $mindex = $self->mindex();
   }
 
-  $max    = (defined ($self->{max}) ? $self->{max} : $aref->[0]);
-  $maxdex = $self->{maxdex} || 0;
+  if (!defined($max = $self->max()))
+  {
+      $max = $aref->[$maxdex = 0];
+  }
+  else
+  {
+      $maxdex = $self->maxdex();
+  }
+
   $sum = $self->sum();
   $sumsq = $self->sumsq();
   $count = $self->count();
@@ -121,8 +128,8 @@ sub add_data {
 
   $self->min($min);
   $self->mindex($mindex);
-  $self->{max}          = $max;
-  $self->{maxdex}       = $maxdex;
+  $self->max($max);
+  $self->maxdex($maxdex);
   $self->{sample_range} = $max - $min;
   $self->sum($sum);
   $self->sumsq($sumsq);
@@ -275,7 +282,7 @@ sub sort_data {
   $self->presorted(1);
   ##Fix the maxima and minima indices
   $self->mindex(0);
-  $self->{maxdex} = $#{$self->{data}};
+  $self->maxdex($#{$self->{data}});
   return 1;
 }
 
@@ -442,8 +449,8 @@ sub frequency_distribution {
     foreach my $idx (1 .. ($partitions-1)) {
         push @k, ($self->min() + $idx * $interval);
     }
-    $bins{$self->{max}} = 0;
-    push @k, $self->{max};
+    $bins{$self->max()} = 0;
+    push @k, $self->max();
   }
 
   ELEMENT: foreach $element (@{$self->{data}}) {
