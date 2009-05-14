@@ -115,19 +115,18 @@ ok (!defined($single_result),
     "harmonic_mean is undefined if the sum of the reciprocals is zero."
 );
 
-# test #5
-# test error condition on harmonic mean : sum of elements near zero
-$stat = Statistics::Descriptive::Full->new();
-my $savetol = $Statistics::Descriptive::Tolerance;
-$Statistics::Descriptive::Tolerance = 0.1;
-$stat->add_data( 1.01, -1.0 );
-$single_result = $stat->harmonic_mean();
-# TEST
-ok (! defined( $single_result ),
-    "test error condition on harmonic mean : sum of elements near zero"
-);
-
-$Statistics::Descriptive::Tolerance = $savetol;
+{
+    # test #5
+    # test error condition on harmonic mean : sum of elements near zero
+    my $stat = Statistics::Descriptive::Full->new();
+    local $Statistics::Descriptive::Tolerance = 0.1;
+    $stat->add_data( 1.01, -1.0 );
+    $single_result = $stat->harmonic_mean();
+    # TEST
+    ok (! defined( $single_result ),
+        "test error condition on harmonic mean : sum of elements near zero"
+    );
+}
 
 {
     # test #6
