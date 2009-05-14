@@ -74,46 +74,50 @@ sub is_between
     );
 }
 
-# print "1..14\n";
 
-# test #1
+{
+    # test #1
+    my $stat = Statistics::Descriptive::Full->new();
+    my @results = $stat->least_squares_fit();
+    # TEST
+    ok (!scalar(@results), "Results on an non-filled object are empty.");
 
-my $stat = Statistics::Descriptive::Full->new();
-my @results = $stat->least_squares_fit();
-# TEST
-ok (!scalar(@results), "Results on an non-filled object are empty.");
+    # test #2
+    # data are y = 2*x - 1
 
-# test #2
-# data are y = 2*x - 1
+    $stat->add_data( 1, 3, 5, 7 );
+    @results = $stat->least_squares_fit();
+    # TEST
+    is_deeply (
+        [@results[0..1]],
+        [-1, 2],
+        "least_squares_fit returns the correct result."
+    );
+}
 
-$stat->add_data( 1, 3, 5, 7 );
-@results = $stat->least_squares_fit();
-# TEST
-is_deeply (
-    [@results[0..1]],
-    [-1, 2],
-    "least_squares_fit returns the correct result."
-);
+{
+    # test #3
+    # test error condition on harmonic mean : one element zero
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data( 1.1, 2.9, 4.9, 0.0 );
+    my $single_result = $stat->harmonic_mean();
+    # TEST
+    ok (!defined($single_result),
+        "harmonic_mean is undefined if there's a 0 datum."
+    );
+}
 
-# test #3
-# test error condition on harmonic mean : one element zero
-$stat = Statistics::Descriptive::Full->new();
-$stat->add_data( 1.1, 2.9, 4.9, 0.0 );
-my $single_result = $stat->harmonic_mean();
-# TEST
-ok (!defined($single_result),
-    "harmonic_mean is undefined if there's a 0 datum."
-);
-
-# test #4
-# test error condition on harmonic mean : sum of elements zero
-$stat = Statistics::Descriptive::Full->new();
-$stat->add_data( 1.0, -1.0 );
-$single_result = $stat->harmonic_mean();
-# TEST
-ok (!defined($single_result),
-    "harmonic_mean is undefined if the sum of the reciprocals is zero."
-);
+{
+    # test #4
+    # test error condition on harmonic mean : sum of elements zero
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data( 1.0, -1.0 );
+    my $single_result = $stat->harmonic_mean();
+    # TEST
+    ok (!defined($single_result),
+        "harmonic_mean is undefined if the sum of the reciprocals is zero."
+    );
+}
 
 {
     # test #5
@@ -121,7 +125,7 @@ ok (!defined($single_result),
     my $stat = Statistics::Descriptive::Full->new();
     local $Statistics::Descriptive::Tolerance = 0.1;
     $stat->add_data( 1.01, -1.0 );
-    $single_result = $stat->harmonic_mean();
+    my $single_result = $stat->harmonic_mean();
     # TEST
     ok (! defined( $single_result ),
         "test error condition on harmonic mean : sum of elements near zero"
@@ -133,7 +137,7 @@ ok (!defined($single_result),
     # test normal function of harmonic mean
     my $stat = Statistics::Descriptive::Full->new();
     $stat->add_data( 1,2,3 );
-    $single_result = $stat->harmonic_mean();
+    my $single_result = $stat->harmonic_mean();
     # TEST
     ok (scalar(abs( $single_result - 1.6363 ) < 0.001),
         "test normal function of harmonic mean",
