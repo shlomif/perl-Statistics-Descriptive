@@ -92,8 +92,8 @@ sub add_data {
   $max    = (defined ($self->{max}) ? $self->{max} : $aref->[0]);
   $maxdex = $self->{maxdex} || 0;
   $mindex = $self->{mindex} || 0;
-  $sum = $self->{sum};
-  $sumsq = $self->{sumsq};
+  $sum = $self->sum();
+  $sumsq = $self->sumsq();
   $count = $self->{count};
 
   ##Calculate new mean, sumsq, min and max;
@@ -116,8 +116,8 @@ sub add_data {
   $self->{max}          = $max;
   $self->{maxdex}       = $maxdex;
   $self->{sample_range} = $max - $min;
-  $self->{sum}		= $sum;
-  $self->{sumsq}	= $sumsq;
+  $self->sum($sum);
+  $self->sumsq($sumsq);
   $self->{mean}		= $sum / $count;
   $self->{count}	= $count;
   ##indicator the value is not cached.  Variance isn't commonly enough
@@ -143,7 +143,7 @@ sub variance {
 
   my $variance = $self->{variance};
   if (!defined($variance)) {
-    $variance = ($self->{sumsq} - $count * $self->{mean}**2);
+    $variance = ($self->sumsq()- $count * $self->{mean}**2);
 
     # Sometimes due to rounding errors we get a number below 0.
     # This makes sure this is handled as gracefully as possible.
