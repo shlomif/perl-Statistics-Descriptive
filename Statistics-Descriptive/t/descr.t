@@ -196,38 +196,42 @@ is_deeply(
     "Test the frequency distribution with specified bins"
 );
 
-# test #10 and #11
-# Test the percentile function and caching
-$stat = Statistics::Descriptive::Full->new();
-$stat->add_data(-5,-2,4,7,7,18);
-##Check algorithm
-# TEST
-is ($stat->percentile(50),
-    4,
-    "percentile function and caching - 1",
-);
-# TEST
-is ($stat->percentile(25),
-    -2,
-    "percentile function and caching - 2",
-);
+{
+    # test #10 and #11
+    # Test the percentile function and caching
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data(-5,-2,4,7,7,18);
+    ##Check algorithm
+    # TEST
+    is ($stat->percentile(50),
+        4,
+        "percentile function and caching - 1",
+    );
+    # TEST
+    is ($stat->percentile(25),
+        -2,
+        "percentile function and caching - 2",
+    );
+}
 
-# tests #12 and #13
-# Check correct parsing of method parameters
-$stat = Statistics::Descriptive::Full->new();
-$stat->add_data(1,2,3,4,5,6,7,8,9,10);
-# TEST
-is(
-    $stat->trimmed_mean(0.1,0.1),
-    $stat->trimmed_mean(0.1),
-    "correct parsing of method parameters",
-);
+{
+    # tests #12 and #13
+    # Check correct parsing of method parameters
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data(1,2,3,4,5,6,7,8,9,10);
+    # TEST
+    is(
+        $stat->trimmed_mean(0.1,0.1),
+        $stat->trimmed_mean(0.1),
+        "correct parsing of method parameters",
+    );
 
-# TEST
-is ($stat->trimmed_mean(0.1,0),
-    6,
-    "correct parsing of method parameters - 2",
-);
+    # TEST
+    is ($stat->trimmed_mean(0.1,0),
+        6,
+        "correct parsing of method parameters - 2",
+    );
+}
 
 {
     # tests #14
