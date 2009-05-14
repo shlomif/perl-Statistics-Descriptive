@@ -140,61 +140,64 @@ ok (scalar(abs( $single_result - 1.6363 ) < 0.001),
 );
 
 
+{
+    # test #7
+    # test stringification of hash keys in frequency distribution
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data(0.1,
+                    0.15,
+                    0.16,
+                   1/3);
+    my %f = $stat->frequency_distribution(2);
 
-# test #7
-# test stringification of hash keys in frequency distribution
-$stat = Statistics::Descriptive::Full->new();
-$stat->add_data(0.1,
-                0.15,
-                0.16,
-               1/3);
-my %f = $stat->frequency_distribution(2);
+    # TEST
+    compare_hash_by_ranges(
+        \%f,
+        [[0.216666,0.216667,3],[0.3333,0.3334,1]],
+        "Test stringification of hash keys in frequency distribution",
+    );
 
-# TEST
-compare_hash_by_ranges(
-    \%f,
-    [[0.216666,0.216667,3],[0.3333,0.3334,1]],
-    "Test stringification of hash keys in frequency distribution",
-);
+    # test #8
+    ##Test memorization of last frequency distribution
+    my %g = $stat->frequency_distribution();
+    # TEST
+    is_deeply(
+        \%f,
+        \%g,
+        "memorization of last frequency distribution"
+    );
+}
 
-# test #8
-##Test memorization of last frequency distribution
-my %g = $stat->frequency_distribution();
-# TEST
-is_deeply(
-    \%f,
-    \%g,
-    "memorization of last frequency distribution"
-);
+{
+    # test #9
+    # test the frequency distribution with specified bins
+    my $stat = Statistics::Descriptive::Full->new();
+    my @freq_bins=(20,40,60,80,100);
+    $stat->add_data(23.92,
+                    32.30,
+                    15.27,
+                    39.89,
+                    8.96,
+                    40.71,
+                    16.20,
+                    34.61,
+                    27.98,
+                    74.40);
+    my %f = $stat->frequency_distribution(\@freq_bins);
 
-# test #9
-# test the frequency distribution with specified bins
-$stat = Statistics::Descriptive::Full->new();
-my @freq_bins=(20,40,60,80,100);
-$stat->add_data(23.92,
-                32.30,
-                15.27,
-                39.89,
-                8.96,
-                40.71,
-                16.20,
-                34.61,
-                27.98,
-                74.40);
-%f = $stat->frequency_distribution(\@freq_bins);
-
-# TEST
-is_deeply(
-    \%f,
-    {
-        20 => 3,
-        40 => 5,
-        60 => 1,
-        80 => 1,
-        100 => 0,
-    },
-    "Test the frequency distribution with specified bins"
-);
+    # TEST
+    is_deeply(
+        \%f,
+        {
+            20 => 3,
+            40 => 5,
+            60 => 1,
+            80 => 1,
+            100 => 0,
+        },
+        "Test the frequency distribution with specified bins"
+    );
+}
 
 {
     # test #10 and #11
