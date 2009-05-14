@@ -118,7 +118,7 @@ sub add_data {
   $self->{sample_range} = $max - $min;
   $self->sum($sum);
   $self->sumsq($sumsq);
-  $self->{mean}		= $sum / $count;
+  $self->mean($sum / $count);
   $self->count($count);
   ##indicator the value is not cached.  Variance isn't commonly enough
   ##used to recompute every single data add.
@@ -143,7 +143,7 @@ sub variance {
 
   my $variance = $self->{variance};
   if (!defined($variance)) {
-    $variance = ($self->sumsq()- $count * $self->{mean}**2);
+    $variance = ($self->sumsq()- $count * $self->mean()**2);
 
     # Sometimes due to rounding errors we get a number below 0.
     # This makes sure this is handled as gracefully as possible.
