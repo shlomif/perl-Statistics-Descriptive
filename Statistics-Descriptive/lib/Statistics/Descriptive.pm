@@ -414,14 +414,14 @@ sub geometric_mean {
   return $self->{geometric_mean} = $gm;
 }
 
-sub frequency_distribution {
+sub frequency_distribution_ref {
   my $self = shift;
   my $element;
   my @k = ();
   return undef if $self->count() < 2; #Must have at least two elements
 
   ##Cache
-  return %{$self->{frequency}}
+  return $self->{frequency}
     if ((defined $self->{frequency}) and !@_);
 
   my %bins;
@@ -461,7 +461,22 @@ sub frequency_distribution {
       }
     }
   }
-  return %{$self->{frequency}} = %bins;
+  return $self->{frequency} = \%bins;
+}
+
+sub frequency_distribution {
+    my $self = shift;
+
+    my $ret = $self->frequency_distribution_ref(@_);
+
+    if (!defined($ret))
+    {
+        return undef;
+    }
+    else
+    {
+        return %$ret;
+    }
 }
 
 sub least_squares_fit {
@@ -760,16 +775,16 @@ to analyze it.
 All calls to trimmed_mean() are cached so that they don't have to be
 calculated a second time.
 
-=item $stat->frequency_distribution($partitions);
+=item $stat->frequency_distribution_ref($partitions);
 
-=item $stat->frequency_distribution(\@bins);
+=item $stat->frequency_distribution_ref(\@bins);
 
-=item $stat->frequency_distribution();
+=item $stat->frequency_distribution_ref();
 
-C<frequency_distribution($partitions)> slices the data into
+C<frequency_distribution_ref($partitions)> slices the data into
 C<$partition> sets (where $partition is greater than 1) and counts the
-number of items that fall into each partition. It returns an
-associative array where the keys are the numerical values of the
+number of items that fall into each partition. It returns a reference to
+a hash where the keys are the numerical values of the
 partitions used. The minimum value of the data set is not a key and the
 maximum value of the data set is always a key. The number of entries
 for a particular partition key are the number of items which are
@@ -777,9 +792,9 @@ greater than the previous partition key and less then or equal to the
 current partition key. As an example,
 
    $stat->add_data(1,1.5,2,2.5,3,3.5,4);
-   %f = $stat->frequency_distribution(2);
-   for (sort {$a <=> $b} keys %f) {
-      print "key = $_, count = $f{$_}\n";
+   $f = $stat->frequency_distribution_ref(2);
+   for (sort {$a <=> $b} keys %$f) {
+      print "key = $_, count = $f->{$_}\n";
    }
 
 prints
@@ -790,15 +805,25 @@ prints
 since there are four items less than or equal to 2.5, and 3 items
 greater than 2.5 and less than 4.
 
-C<frequency_distribution(\@bins)> provides the bins that are to be used
+C<frequency_distribution_refs(\@bins)> provides the bins that are to be used
 for the distribution.  This allows for non-uniform distributions as
 well as trimmed or sample distributions to be found.  C<@bins> must
 be monotonic and contain at least one element.  Note that unless the
 set of bins contains the range that the total counts returned will
 be less than the sample size.
 
-Calling C<frequency_distribution()> with no arguments returns the last
+Calling C<frequency_distribution_ref()> with no arguments returns the last
 distribution calculated, if such exists.
+
+=item my %hash = $stat->frequency_distribution($partitions);
+
+=item my %hash = $stat->frequency_distribution(\@bins);
+
+=item my %hash = $stat->frequency_distribution();
+
+Same as C<frequency_distribution_ref()> except that returns the hash clobbered
+into the return list. Kept for compatibility reasons with previous
+versions of Statistics::Descriptive and using it is discouraged.
 
 =item $stat->least_squares_fit();
 

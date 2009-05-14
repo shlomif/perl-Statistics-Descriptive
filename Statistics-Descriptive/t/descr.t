@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 21;
+use Test::More tests => 22;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -319,5 +319,39 @@ sub is_between
     is ($stat->max(),
         5,
         "The maximum is 5."
+    );
+}
+
+{
+    # test #9
+    # test the frequency distribution with specified bins
+    my $stat = Statistics::Descriptive::Full->new();
+
+    my @freq_bins=(20,40,60,80,100);
+
+    $stat->add_data(23.92,
+                    32.30,
+                    15.27,
+                    39.89,
+                    8.96,
+                    40.71,
+                    16.20,
+                    34.61,
+                    27.98,
+                    74.40);
+
+    my $f_d = $stat->frequency_distribution_ref(\@freq_bins);
+
+    # TEST
+    is_deeply(
+        $f_d,
+        {
+            20 => 3,
+            40 => 5,
+            60 => 1,
+            80 => 1,
+            100 => 0,
+        },
+        "Test the frequency distribution returned as a scalar reference"
     );
 }

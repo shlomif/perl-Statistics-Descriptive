@@ -4,6 +4,8 @@ Revision history for Perl extension Statistics::Descriptive.
     - Localized the scope of $stat and other variables in t/descr.t
     - Got rid of AUTOLOAD in favour of individual accessors.
     - Converted many direct member accesses to the accessors.
+    - Added ->frequency_distribution_ref() which deprecates
+      frequency_distribution().
 
 2.9   May 13, 2009
 
