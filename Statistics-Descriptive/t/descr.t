@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 16;
+use Test::More tests => 21;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -273,3 +273,38 @@ ok ($t[1] < $t[0],
     );
 }
 
+{
+    my $stat = Statistics::Descriptive::Full->new();
+
+    $stat->add_data(1, 2, 3, 5);
+
+    # TEST
+    is ($stat->count(),
+        4,
+        "There are 4 elements."
+    );
+
+    # TEST
+    is ($stat->sum(),
+        11,
+        "The sum is 11",
+    );
+
+    # TEST
+    is ($stat->sumsq(),
+        39,
+        "The sum of squares is 39"
+    );
+
+    # TEST
+    is ($stat->min(),
+        1,
+        "The minimum is 1."
+    );
+
+    # TEST
+    is ($stat->max(),
+        5,
+        "The maximum is 5."
+    );
+}
