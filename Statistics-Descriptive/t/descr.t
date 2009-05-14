@@ -129,16 +129,17 @@ ok (! defined( $single_result ),
 
 $Statistics::Descriptive::Tolerance = $savetol;
 
-# test #6
-# test normal function of harmonic mean
-$stat = Statistics::Descriptive::Full->new();
-$stat->add_data( 1,2,3 );
-$single_result = $stat->harmonic_mean();
-# TEST
-ok (scalar(abs( $single_result - 1.6363 ) < 0.001),
-    "test normal function of harmonic mean",
-);
-
+{
+    # test #6
+    # test normal function of harmonic mean
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data( 1,2,3 );
+    $single_result = $stat->harmonic_mean();
+    # TEST
+    ok (scalar(abs( $single_result - 1.6363 ) < 0.001),
+        "test normal function of harmonic mean",
+    );
+}
 
 {
     # test #7
