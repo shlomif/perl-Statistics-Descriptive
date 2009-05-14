@@ -16,8 +16,33 @@ $Tolerance = 0.0;
 
 package Statistics::Descriptive::Sparse;
 
-use vars qw($AUTOLOAD %fields);
+use vars qw(%fields);
 use Carp;
+
+sub _make_accessors
+{
+    my ($pkg, $methods) = @_;
+
+    no strict 'refs';
+    foreach my $method (@$methods)
+    {
+        *{$pkg."::".$method} =
+            do {
+                my $m = $method;
+                sub {
+                    my $self = shift;
+
+                    if (@_)
+                    {
+                        $self->{$m} = shift;
+                    }
+                    return $self->{$m};
+                };
+            };
+    }
+
+    return;
+}
 
 ##Define the fields to be used as methods
 %fields = (
@@ -25,13 +50,15 @@ use Carp;
   mean			=> 0,
   sum			=> 0,
   sumsq			=> 0,
-  variance		=> undef,
   min			=> undef,
   max			=> undef,
   mindex		=> undef,
   maxdex		=> undef,
   sample_range		=> undef,
+  variance => undef,
   );
+
+__PACKAGE__->_make_accessors( [ grep { $_ ne "variance" } keys(%fields) ] );
 
 sub new {
   my $proto = shift;
@@ -146,20 +173,6 @@ sub clear {
   while (my($field, $value) = each %fields) {
     $self->{$field} = $value;
   }
-}
-
-sub AUTOLOAD {
-  my $self = shift;
-  my $type = ref($self)
-    or croak "$self is not an object";
-  my $name = $AUTOLOAD;
-  $name =~ s/.*://;     ##Strip fully qualified-package portion
-  return if $name eq "DESTROY";
-  unless (exists $self->{'_permitted'}->{$name} ) {
-    croak "Can't access `$name' field in class $type";
-  }
-  ##Read only method 
-  return $self->{$name};
 }
 
 1;
