@@ -130,7 +130,7 @@ sub add_data {
   $self->mindex($mindex);
   $self->max($max);
   $self->maxdex($maxdex);
-  $self->{sample_range} = $max - $min;
+  $self->sample_range($max - $min);
   $self->sum($sum);
   $self->sumsq($sumsq);
   $self->mean($sum / $count);
@@ -445,7 +445,7 @@ sub frequency_distribution {
   }
   else {
     return undef unless $partitions >= 1;
-    my $interval = $self->{sample_range}/$partitions;
+    my $interval = $self->sample_range()/$partitions;
     foreach my $idx (1 .. ($partitions-1)) {
         push @k, ($self->min() + $idx * $interval);
     }
