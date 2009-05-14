@@ -88,10 +88,18 @@ sub add_data {
   return 1 if (!@{ $aref });
 
   ##Take care of appending to an existing data set
-  $min    = (defined ($self->{min}) ? $self->{min} : $aref->[0]);
+  
+  if (!defined($min = $self->min()))
+  {
+      $min = $aref->[$mindex = 0];
+  }
+  else
+  {
+      $mindex = $self->mindex();
+  }
+
   $max    = (defined ($self->{max}) ? $self->{max} : $aref->[0]);
   $maxdex = $self->{maxdex} || 0;
-  $mindex = $self->{mindex} || 0;
   $sum = $self->sum();
   $sumsq = $self->sumsq();
   $count = $self->count();
@@ -111,8 +119,8 @@ sub add_data {
     }
   }
 
-  $self->{min}          = $min;
-  $self->{mindex}       = $mindex;
+  $self->min($min);
+  $self->mindex($mindex);
   $self->{max}          = $max;
   $self->{maxdex}       = $maxdex;
   $self->{sample_range} = $max - $min;
@@ -266,7 +274,7 @@ sub sort_data {
   $self->{data} = [ sort {$a <=> $b} @{$self->{data}} ];
   $self->presorted(1);
   ##Fix the maxima and minima indices
-  $self->{mindex} = 0;
+  $self->mindex(0);
   $self->{maxdex} = $#{$self->{data}};
   return 1;
 }
@@ -432,7 +440,7 @@ sub frequency_distribution {
     return undef unless $partitions >= 1;
     my $interval = $self->{sample_range}/$partitions;
     foreach my $idx (1 .. ($partitions-1)) {
-        push @k, ($self->{min} + $idx * $interval);
+        push @k, ($self->min() + $idx * $interval);
     }
     $bins{$self->{max}} = 0;
     push @k, $self->{max};
