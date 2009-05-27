@@ -84,6 +84,7 @@ sub _make_private_accessors
   );
 
 __PACKAGE__->_make_accessors( [ grep { $_ ne "variance" } keys(%fields) ] );
+__PACKAGE__->_make_private_accessors(["variance"]);
 
 sub new {
   my $proto = shift;
@@ -162,14 +163,14 @@ sub add_data {
   $self->count($count);
   ##indicator the value is not cached.  Variance isn't commonly enough
   ##used to recompute every single data add.
-  $self->{variance}	= undef;
+  $self->_variance(undef());
   return 1;
 }
 
 sub standard_deviation {
   my $self = shift;  ##Myself
   return undef if (!$self->count());
-  return sqrt(variance($self));
+  return sqrt($self->variance());
 }
 
 ##Return variance; if needed, compute and cache it.
@@ -181,9 +182,8 @@ sub variance {
       return 0;
   }
 
-  my $variance = $self->{variance};
-  if (!defined($variance)) {
-    $variance = ($self->sumsq()- $count * $self->mean()**2);
+  if (!defined($self->_variance())) {
+    my $variance = ($self->sumsq()- $count * $self->mean()**2);
 
     # Sometimes due to rounding errors we get a number below 0.
     # This makes sure this is handled as gracefully as possible.
@@ -198,9 +198,9 @@ sub variance {
 
     $variance /= $count - $div;
 
-    $self->{variance} = $variance;
+    $self->_variance($variance);
   }
-  return $variance;
+  return $self->_variance();
 }
 
 ##Clear a stat.  More efficient than destroying an object and calling
@@ -931,6 +931,12 @@ track it down.
 =back
 
 =head1 AUTHOR
+
+Current maintainer:
+
+Shlomi Fish, L<http://www.shlomifish.org/> , C<shlomif@cpan.org>
+
+Previously:
 
 Colin Kuskie
 
