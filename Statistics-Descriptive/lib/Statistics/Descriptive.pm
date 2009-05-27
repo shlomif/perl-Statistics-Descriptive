@@ -305,12 +305,17 @@ sub get_data {
 
 sub sort_data {
   my $self = shift;
-  ##Sort the data in descending order
-  $self->_data([ sort {$a <=> $b} @{$self->_data()} ]);
-  $self->presorted(1);
-  ##Fix the maxima and minima indices
-  $self->mindex(0);
-  $self->maxdex($#{$self->_data()});
+
+  if (! $self->presorted())
+  {
+      ##Sort the data in descending order
+      $self->_data([ sort {$a <=> $b} @{$self->_data()} ]);
+      $self->presorted(1);
+      ##Fix the maxima and minima indices
+      $self->mindex(0);
+      $self->maxdex($#{$self->_data()});
+  }
+
   return 1;
 }
 
@@ -326,7 +331,7 @@ sub percentile {
   my $count = $self->count();
   return undef if $percentile < 100 / $count;
 
-  $self->sort_data() unless $self->presorted();
+  $self->sort_data();
   my $num = $count*$percentile/100;
   my $index = &POSIX::ceil($num) - 1;
   my $val = $self->_data->[$index];
@@ -342,7 +347,7 @@ sub median {
     ##Cached?
     return $self->{median} if defined $self->{median};
 
-    $self->sort_data() unless $self->presorted();
+    $self->sort_data();
     my $count = $self->count();
     ##Even or odd
     if ($count % 2)
@@ -378,7 +383,7 @@ sub trimmed_mean {
   my ($val,$oldmean) = (0,0);
   my ($tm_count,$tm_mean,$index) = (0,0,$lower_trim);
 
-  $self->sort_data() unless $self->presorted();
+  $self->sort_data();
   while ($index <= $self->count() - $upper_trim -1) {
     $val = $self->_data()->[$index];
     $oldmean = $tm_mean;
