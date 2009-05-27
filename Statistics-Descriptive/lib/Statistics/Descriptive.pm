@@ -235,7 +235,7 @@ use vars qw(@ISA $a $b %fields);
   _reserved  => undef,  ##Place holder for this lookup hash
 );
 
-__PACKAGE__->_make_private_accessors([qw(data)]);
+__PACKAGE__->_make_private_accessors([qw(data median)]);
 __PACKAGE__->_make_accessors([qw(presorted)]);
 
 ##Have to override the base method to add the data to the object
@@ -341,26 +341,35 @@ sub percentile {
     ;
 }
 
-sub median {
+sub _calc_new_median
+{
     my $self = shift;
-
-    ##Cached?
-    return $self->{median} if defined $self->{median};
-
-    $self->sort_data();
     my $count = $self->count();
+
     ##Even or odd
     if ($count % 2)
     {   
-        return $self->{median} = $self->_data->[($count-1)/2];
+        return $self->_data->[($count-1)/2];
     }
     else
     {
-        return $self->{median} =
+        return
         (
             ($self->_data->[($count)/2] + $self->_data->[($count-2)/2] ) / 2
         );
     }
+}
+
+sub median {
+    my $self = shift;
+
+    ##Cached?
+    if (! defined($self->_median()))
+    {
+        $self->sort_data();
+        $self->_median($self->_calc_new_median());
+    }
+    return $self->_median();
 }
 
 sub trimmed_mean {
