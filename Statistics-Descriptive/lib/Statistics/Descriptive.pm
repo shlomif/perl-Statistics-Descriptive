@@ -44,6 +44,31 @@ sub _make_accessors
     return;
 }
 
+sub _make_private_accessors
+{
+    my ($pkg, $methods) = @_;
+
+    no strict 'refs';
+    foreach my $method (@$methods)
+    {
+        *{$pkg."::_".$method} =
+            do {
+                my $m = $method;
+                sub {
+                    my $self = shift;
+
+                    if (@_)
+                    {
+                        $self->{$m} = shift;
+                    }
+                    return $self->{$m};
+                };
+            };
+    }
+
+    return;
+}
+
 ##Define the fields to be used as methods
 %fields = (
   count			=> 0,
@@ -210,13 +235,17 @@ use vars qw(@ISA $a $b %fields);
   _reserved  => undef,  ##Place holder for this lookup hash
 );
 
+__PACKAGE__->_make_private_accessors([qw(data)]);
+
 ##Have to override the base method to add the data to the object
 ##The proxy method from above is still valid
 sub new {
   my $proto = shift;
   my $class = ref($proto) || $proto;
-  my $self = $class->SUPER::new();  ##Create my self re SUPER
-  $self->{data} = [];   ##Empty array ref for holding data later!
+  # Create my self re SUPER
+  my $self = $class->SUPER::new();  
+  # Empty array ref for holding data later!
+  $self->_data([]);
   $self->{'_reserved'} = \%fields;
   $self->{presorted} = 0;
   bless ($self, $class);  #Re-anneal the object
@@ -238,10 +267,8 @@ sub clear {
     delete $self->{$key};          # Delete the out of date cached key
   }
   $self->SUPER::clear();
-  if (exists($self->{data})) {
-    $self->{data} = [];
-    $self->{presorted} = 0;
-  }
+  $self->_data([]);
+  $self->{presorted} = 0;
 }
 
 sub add_data {
@@ -256,7 +283,7 @@ sub add_data {
     $aref = \@_;
   }
   $self->SUPER::add_data($aref);  ##Perform base statistics on the data
-  push @{ $self->{data} }, @{ $aref };
+  push @{ $self->_data() }, @{ $aref };
   ##Clear the presorted flag
   $self->{'presorted'} = 0;
   ##Need to delete all cached keys
@@ -272,17 +299,17 @@ sub add_data {
 
 sub get_data {
   my $self = shift;
-  return @{ $self->{data} };
+  return @{ $self->_data() };
 }
 
 sub sort_data {
   my $self = shift;
   ##Sort the data in descending order
-  $self->{data} = [ sort {$a <=> $b} @{$self->{data}} ];
+  $self->_data([ sort {$a <=> $b} @{$self->_data()} ]);
   $self->presorted(1);
   ##Fix the maxima and minima indices
   $self->mindex(0);
-  $self->maxdex($#{$self->{data}});
+  $self->maxdex($#{$self->_data()});
   return 1;
 }
 
@@ -312,26 +339,33 @@ sub percentile {
   $self->sort_data() unless $self->{'presorted'};
   my $num = $count*$percentile/100;
   my $index = &POSIX::ceil($num) - 1;
+  my $val = $self->_data->[$index];
   return wantarray
-    ?  (${ $self->{data} }[ $index ], $index)
-    :   ${ $self->{data} }[ $index ];
+    ? ($val, $index)
+    : $val
+    ;
 }
 
 sub median {
-  my $self = shift;
+    my $self = shift;
 
-  ##Cached?
-  return $self->{median} if defined $self->{median};
+    ##Cached?
+    return $self->{median} if defined $self->{median};
 
-  $self->sort_data() unless $self->{'presorted'};
-  my $count = $self->count();
-  if ($count % 2) {   ##Even or odd
-    return $self->{median} = @{ $self->{data} }[($count-1)/2];
-  }
-  else {
-    return $self->{median} =
-	   (@{$self->{data}}[($count)/2] + @{$self->{data}}[($count-2)/2] ) / 2;
-  }
+    $self->sort_data() unless $self->{'presorted'};
+    my $count = $self->count();
+    ##Even or odd
+    if ($count % 2)
+    {   
+        return $self->{median} = $self->_data->[($count-1)/2];
+    }
+    else
+    {
+        return $self->{median} =
+        (
+            ($self->_data->[($count)/2] + $self->_data->[($count-2)/2] ) / 2
+        );
+    }
 }
 
 sub trimmed_mean {
@@ -356,7 +390,7 @@ sub trimmed_mean {
 
   $self->sort_data() unless $self->{'presorted'};
   while ($index <= $self->count() - $upper_trim -1) {
-    $val = @{ $self->{data} }[$index];
+    $val = $self->_data()->[$index];
     $oldmean = $tm_mean;
     $index++;
     $tm_count++;
@@ -369,7 +403,7 @@ sub harmonic_mean {
   my $self = shift;
   return $self->{harmonic_mean} if defined $self->{harmonic_mean};
   my $hs = 0;
-  for (@{ $self->{data} }) {
+  for (@{ $self->_data() }) {
     ##Guarantee that there are no divide by zeros
     return $self->{harmonic_mean} = undef
       unless abs($_) > $Statistics::Descriptive::Tolerance;
@@ -385,7 +419,7 @@ sub mode {
   return $self->{mode} if defined $self->{mode};
   my ($md,$occurances,$flag) = (0,0,1);
   my %count;
-  foreach (@{ $self->{data} }) {
+  foreach (@{ $self->_data() }) {
     $count{$_}++;
     $flag = 0 if ($count{$_} > 1);
   }
@@ -407,7 +441,7 @@ sub geometric_mean {
   return $self->{geometric_mean} if defined $self->{geometric_mean};
   my $gm = 1;
   my $exponent = 1/$self->count();
-  for (@{ $self->{data} }) {
+  for (@{ $self->_data() }) {
     return undef if $_ < 0;
     $gm *= $_**$exponent;
   }
@@ -453,7 +487,7 @@ sub frequency_distribution_ref {
     push @k, $self->max();
   }
 
-  ELEMENT: foreach $element (@{$self->{data}}) {
+  ELEMENT: foreach $element (@{$self->_data()}) {
     for (@k) {
       if ($element <= $_) {
         $bins{$_}++;
@@ -506,7 +540,7 @@ sub least_squares_fit {
     }
   }
   foreach $x (@x) {
-    $y = $self->{data}[$iter];
+    $y = $self->_data->[$iter];
     $sigmayy += $y * $y;
     $sigmaxx += $x * $x;
     $sigmaxy += $x * $y;
@@ -531,7 +565,7 @@ sub least_squares_fit {
   $rms = 0.0;
   foreach (@x) {
     ##Error = Real y - calculated y
-    $err = $self->{data}[$iter] - ( $m * $_ + $q );
+    $err = $self->_data->[$iter] - ( $m * $_ + $q );
     $rms += $err*$err;
     $iter++;
   }
