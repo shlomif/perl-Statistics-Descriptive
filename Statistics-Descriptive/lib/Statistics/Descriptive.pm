@@ -236,6 +236,7 @@ use vars qw(@ISA $a $b %fields);
 );
 
 __PACKAGE__->_make_private_accessors([qw(data)]);
+__PACKAGE__->_make_accessors([qw(presorted)]);
 
 ##Have to override the base method to add the data to the object
 ##The proxy method from above is still valid
@@ -247,7 +248,7 @@ sub new {
   # Empty array ref for holding data later!
   $self->_data([]);
   $self->{'_reserved'} = \%fields;
-  $self->{presorted} = 0;
+  $self->presorted(0);
   bless ($self, $class);  #Re-anneal the object
   return $self;
 }
@@ -268,7 +269,7 @@ sub clear {
   }
   $self->SUPER::clear();
   $self->_data([]);
-  $self->{presorted} = 0;
+  $self->presorted(0);
 }
 
 sub add_data {
@@ -285,7 +286,7 @@ sub add_data {
   $self->SUPER::add_data($aref);  ##Perform base statistics on the data
   push @{ $self->_data() }, @{ $aref };
   ##Clear the presorted flag
-  $self->{'presorted'} = 0;
+  $self->presorted(0);
   ##Need to delete all cached keys
   foreach $key (keys %{ $self }) { # Check each key in the object
     # If it's a reserved key for this class, keep it
@@ -313,17 +314,6 @@ sub sort_data {
   return 1;
 }
 
-sub presorted {
-  my $self = shift;
-  if ($@) {  ##Assign
-    $self->{'presorted'} = shift;
-    return 1;
-  }
-  else {  ##Inquire
-    return $self->{'presorted'};
-  }
-}
-
 sub percentile {
   my $self = shift;
   my $percentile = shift || 0;
@@ -336,7 +326,7 @@ sub percentile {
   my $count = $self->count();
   return undef if $percentile < 100 / $count;
 
-  $self->sort_data() unless $self->{'presorted'};
+  $self->sort_data() unless $self->presorted();
   my $num = $count*$percentile/100;
   my $index = &POSIX::ceil($num) - 1;
   my $val = $self->_data->[$index];
@@ -352,7 +342,7 @@ sub median {
     ##Cached?
     return $self->{median} if defined $self->{median};
 
-    $self->sort_data() unless $self->{'presorted'};
+    $self->sort_data() unless $self->presorted();
     my $count = $self->count();
     ##Even or odd
     if ($count % 2)
@@ -388,7 +378,7 @@ sub trimmed_mean {
   my ($val,$oldmean) = (0,0);
   my ($tm_count,$tm_mean,$index) = (0,0,$lower_trim);
 
-  $self->sort_data() unless $self->{'presorted'};
+  $self->sort_data() unless $self->presorted();
   while ($index <= $self->count() - $upper_trim -1) {
     $val = $self->_data()->[$index];
     $oldmean = $tm_mean;
