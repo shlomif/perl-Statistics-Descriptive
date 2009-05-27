@@ -236,7 +236,20 @@ use vars qw(@ISA $a $b %fields);
 );
 
 __PACKAGE__->_make_private_accessors([qw(data median)]);
-__PACKAGE__->_make_accessors([qw(presorted)]);
+__PACKAGE__->_make_accessors([qw(presorted _trimmed_mean_cache)]);
+
+sub _clear_fields
+{
+    my $self = shift;
+
+    # Empty array ref for holding data later!
+    $self->_data([]);
+    $self->{'_reserved'} = \%fields;
+    $self->presorted(0);
+    $self->_trimmed_mean_cache(+{});
+
+    return;
+}
 
 ##Have to override the base method to add the data to the object
 ##The proxy method from above is still valid
@@ -245,11 +258,8 @@ sub new {
   my $class = ref($proto) || $proto;
   # Create my self re SUPER
   my $self = $class->SUPER::new();  
-  # Empty array ref for holding data later!
-  $self->_data([]);
-  $self->{'_reserved'} = \%fields;
-  $self->presorted(0);
   bless ($self, $class);  #Re-anneal the object
+  $self->_clear_fields();
   return $self;
 }
 
@@ -268,8 +278,7 @@ sub clear {
     delete $self->{$key};          # Delete the out of date cached key
   }
   $self->SUPER::clear();
-  $self->_data([]);
-  $self->presorted(0);
+  $self->_clear_fields();
 }
 
 sub add_data {
@@ -372,35 +381,53 @@ sub median {
     return $self->_median();
 }
 
-sub trimmed_mean {
-  my $self = shift;
-  my ($lower,$upper);
-  #upper bound is in arg list or is same as lower
-  if (@_ == 1) {
-    ($lower,$upper) = ($_[0],$_[0]);
-  }
-  else {
-    ($lower,$upper) = ($_[0],$_[1]);
-  }
+sub _real_calc_trimmed_mean
+{
+    my $self = shift;
+    my $lower = shift;
+    my $upper = shift;
 
-  ##Cache
-  my $thistm = join ':','tm',$lower,$upper;
-  return $self->{$thistm} if defined $self->{$thistm};
+    my $lower_trim = int ($self->count()*$lower); 
+    my $upper_trim = int ($self->count()*$upper); 
+    my ($val,$oldmean) = (0,0);
+    my ($tm_count,$tm_mean,$index) = (0,0,$lower_trim);
 
-  my $lower_trim = int ($self->count()*$lower); 
-  my $upper_trim = int ($self->count()*$upper); 
-  my ($val,$oldmean) = (0,0);
-  my ($tm_count,$tm_mean,$index) = (0,0,$lower_trim);
+    $self->sort_data();
+    while ($index <= $self->count() - $upper_trim -1)
+    {
+        $val = $self->_data()->[$index];
+        $oldmean = $tm_mean;
+        $index++;
+        $tm_count++;
+        $tm_mean += ($val - $oldmean) / $tm_count;
+    }
 
-  $self->sort_data();
-  while ($index <= $self->count() - $upper_trim -1) {
-    $val = $self->_data()->[$index];
-    $oldmean = $tm_mean;
-    $index++;
-    $tm_count++;
-    $tm_mean += ($val - $oldmean) / $tm_count;
-  }
-  return $self->{$thistm} = $tm_mean;
+    return $tm_mean;
+}
+
+sub trimmed_mean
+{
+    my $self = shift;
+    my ($lower,$upper);
+    #upper bound is in arg list or is same as lower
+    if (@_ == 1)
+    {
+        ($lower,$upper) = ($_[0],$_[0]);
+    }
+    else
+    {
+        ($lower,$upper) = ($_[0],$_[1]);
+    }
+
+    ##Cache
+    my $thistm = join ':',$lower,$upper;
+    my $cache = $self->_trimmed_mean_cache();
+    if (!exists($cache->{$thistm}))
+    {
+        $cache->{$thistm} = $self->_real_calc_trimmed_mean($lower, $upper);
+    }
+
+    return $cache->{$thistm};
 }
 
 sub harmonic_mean {
