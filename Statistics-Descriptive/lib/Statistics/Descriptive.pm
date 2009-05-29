@@ -235,7 +235,7 @@ use vars qw(@ISA $a $b %fields);
   _reserved  => undef,  ##Place holder for this lookup hash
 );
 
-__PACKAGE__->_make_private_accessors([qw(data harmonic_mean median)]);
+__PACKAGE__->_make_private_accessors([qw(data harmonic_mean median mode)]);
 __PACKAGE__->_make_accessors([qw(presorted _trimmed_mean_cache)]);
 
 sub _clear_fields
@@ -475,26 +475,43 @@ sub harmonic_mean
     return $self->_harmonic_mean();
 }
 
-sub mode {
-  my $self = shift;
-  return $self->{mode} if defined $self->{mode};
-  my ($md,$occurances,$flag) = (0,0,1);
-  my %count;
-  foreach (@{ $self->_data() }) {
-    $count{$_}++;
-    $flag = 0 if ($count{$_} > 1);
-  }
-  #Distribution is flat, no mode exists
-  if ($flag) {
-    return undef;
-  }
-  foreach (keys %count) {
-    if ($count{$_} > $occurances) {
-      $occurances = $count{$_};
-      $md = $_;
+sub mode
+{
+    my $self = shift;
+
+    if (!defined ($self->_mode()))
+    {
+        my $mode = 0;
+        my $occurances= 0;
+        my $flag = 1;
+
+        my %count;
+
+        foreach my $item (@{ $self->_data() })
+        {
+            $count{$item}++;
+            $flag = 0 if ($count{$item} > 1);
+        }
+
+        #Distribution is flat - no mode exists
+        if ($flag)
+        {
+            return undef;
+        }
+
+        foreach my $val (keys %count)
+        {
+            if ($count{$val} > $occurances)
+            {
+                $occurances = $count{$val};
+                $mode = $val;
+            }
+        }
+
+        $self->_mode($mode);
     }
-  }
-  return $self->{mode} = $md;
+
+    return $self->_mode();
 }
 
 sub geometric_mean {
