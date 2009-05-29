@@ -84,6 +84,7 @@ sub _make_private_accessors
   );
 
 __PACKAGE__->_make_accessors( [ grep { $_ ne "variance" } keys(%fields) ] );
+__PACKAGE__->_make_accessors( ["_permitted"] );
 __PACKAGE__->_make_private_accessors(["variance"]);
 
 sub new {
@@ -91,10 +92,18 @@ sub new {
   my $class = ref($proto) || $proto;
   my $self = {
     %fields,
-    _permitted => \%fields,
   };
   bless ($self, $class);
+  $self->_permitted(\%fields);
   return $self;
+}
+
+sub _is_permitted
+{
+    my $self = shift;
+    my $key = shift;
+
+    return exists($self->_permitted()->{$key});
 }
 
 sub add_data {
@@ -238,7 +247,7 @@ use vars qw(@ISA $a $b %fields);
 __PACKAGE__->_make_private_accessors(
     [qw(data frequency geometric_mean harmonic_mean median mode)]
 );
-__PACKAGE__->_make_accessors([qw(presorted _trimmed_mean_cache)]);
+__PACKAGE__->_make_accessors([qw(presorted _reserved _trimmed_mean_cache)]);
 
 sub _clear_fields
 {
@@ -246,7 +255,7 @@ sub _clear_fields
 
     # Empty array ref for holding data later!
     $self->_data([]);
-    $self->{'_reserved'} = \%fields;
+    $self->_reserved(\%fields);
     $self->presorted(0);
     $self->_trimmed_mean_cache(+{});
 
@@ -265,27 +274,48 @@ sub new {
   return $self;
 }
 
+sub _is_reserved
+{
+    my $self = shift;
+    my $field = shift;
+
+    return exists($self->_reserved->{$field});
+}
+
+sub _delete_all_cached_keys
+{
+    my $self = shift;
+
+    KEYS_LOOP:
+    foreach my $key (keys %{ $self }) { # Check each key in the object
+        # If it's a reserved key for this class, keep it
+        if ($self->_is_reserved($key) || $self->_is_permitted($key))
+        {
+            next KEYS_LOOP;
+        }
+        delete $self->{$key};          # Delete the out of date cached key
+    }
+    return;
+}
+
 ##Clear a stat.  More efficient than destroying an object and calling
 ##new.
 sub clear {
-  my $self = shift;  ##Myself
-  my $key;
+    my $self = shift;  ##Myself
+    my $key;
 
-  return if (!$self->count());
-  foreach $key (keys %{ $self }) { # Check each key in the object
-    # If it's a reserved key for this class, keep it
-    next if exists $self->{'_reserved'}->{$key};
-    # If it comes from the base class, keep it
-    next if exists $self->{'_permitted'}->{$key};
-    delete $self->{$key};          # Delete the out of date cached key
-  }
-  $self->SUPER::clear();
-  $self->_clear_fields();
+    if (!$self->count())
+    {
+        return;
+    }
+
+    $self->_delete_all_cached_keys();
+    $self->SUPER::clear();
+    $self->_clear_fields();
 }
 
 sub add_data {
   my $self = shift;
-  my $key;
   my $aref;
 
   if (ref $_[0] eq 'ARRAY') {
@@ -298,14 +328,9 @@ sub add_data {
   push @{ $self->_data() }, @{ $aref };
   ##Clear the presorted flag
   $self->presorted(0);
-  ##Need to delete all cached keys
-  foreach $key (keys %{ $self }) { # Check each key in the object
-    # If it's a reserved key for this class, keep it
-    next if exists $self->{'_reserved'}->{$key};
-    # If it comes from the base class, keep it
-    next if exists $self->{'_permitted'}->{$key};
-    delete $self->{$key};          # Delete the out of date cached key
-  }
+
+  $self->_delete_all_cached_keys();
+
   return 1;
 }
 
