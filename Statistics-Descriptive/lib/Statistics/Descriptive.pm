@@ -10,7 +10,7 @@ require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
 		  ##Perl5.  01-03 weren't bug free.
 use vars (qw($VERSION $Tolerance));
 
-$VERSION = '2.9';
+$VERSION = '3.0000';
 
 $Tolerance = 0.0;
 
