@@ -236,7 +236,7 @@ use vars qw(@ISA $a $b %fields);
 );
 
 __PACKAGE__->_make_private_accessors(
-    [qw(data geometric_mean harmonic_mean median mode)]
+    [qw(data frequency geometric_mean harmonic_mean median mode)]
 );
 __PACKAGE__->_make_accessors([qw(presorted _trimmed_mean_cache)]);
 
@@ -539,54 +539,69 @@ sub geometric_mean {
     return $self->_geometric_mean();
 }
 
-sub frequency_distribution_ref {
-  my $self = shift;
-  my $element;
-  my @k = ();
-  return undef if $self->count() < 2; #Must have at least two elements
+sub frequency_distribution_ref
+{
+    my $self = shift;
+    my @k = ();
+    # Must have at least two elements
+    if ($self->count() < 2)
+    {
+        return undef;
+    }
 
-  ##Cache
-  return $self->{frequency}
-    if ((defined $self->{frequency}) and !@_);
+    if ((!@_) && (defined $self->_frequency()))
+    {
+        return $self->_frequency()
+    }
 
-  my %bins;
-  my $partitions = shift;
+    my %bins;
+    my $partitions = shift;
 
-  if (ref($partitions) eq 'ARRAY') {
-    @k = @{ $partitions };
-    return undef unless @k;  ##Empty array
-    if (@k > 1) {
-      ##Check for monotonicity
-      $element = $k[0];
-      for my $next_elem (@k[1..$#k]) {
-        if ($element > $next_elem) {
-          carp "Non monotonic array cannot be used as frequency bins!\n";
-          return undef;
+    if (ref($partitions) eq 'ARRAY')
+    {
+        @k = @{ $partitions };
+        return undef unless @k;  ##Empty array
+        if (@k > 1) {
+            ##Check for monotonicity
+            my $element = $k[0];
+            for my $next_elem (@k[1..$#k]) {
+                if ($element > $next_elem) {
+                    carp "Non monotonic array cannot be used as frequency bins!\n";
+                    return undef;
+                }
+                $element = $next_elem;
+            }
         }
-        $element = $next_elem;
-      }
+        %bins = map { $_ => 0 } @k;
     }
-    %bins = map { $_ => 0 } @k;
-  }
-  else {
-    return undef unless $partitions >= 1;
-    my $interval = $self->sample_range()/$partitions;
-    foreach my $idx (1 .. ($partitions-1)) {
-        push @k, ($self->min() + $idx * $interval);
-    }
-    $bins{$self->max()} = 0;
-    push @k, $self->max();
-  }
+    else
+    {
+        return undef unless $partitions >= 1;
+        my $interval = $self->sample_range() / $partitions;
+        foreach my $idx (1 .. ($partitions-1))
+        {
+            push @k, ($self->min() + $idx * $interval);
+        }
 
-  ELEMENT: foreach $element (@{$self->_data()}) {
-    for (@k) {
-      if ($element <= $_) {
-        $bins{$_}++;
-        next ELEMENT;
-      }
+        $bins{$self->max()} = 0;
+
+        push @k, $self->max();
     }
-  }
-  return $self->{frequency} = \%bins;
+
+    ELEMENT:
+    foreach my $element (@{$self->_data()})
+    {
+        foreach my $limit (@k)
+        {
+            if ($element <= $limit)
+            {
+                $bins{$limit}++;
+                next ELEMENT;
+            }
+        }
+    }
+
+    return $self->_frequency(\%bins);
 }
 
 sub frequency_distribution {
