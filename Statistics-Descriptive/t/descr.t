@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 23;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -355,3 +355,20 @@ sub is_between
         "Test the frequency distribution returned as a scalar reference"
     );
 }
+
+{
+    # test #9
+    # test the frequency distribution with specified bins
+    my $stat = Statistics::Descriptive::Full->new();
+
+    $stat->add_data(2, 4, 8);
+
+    # TEST
+    is_between(
+        $stat->geometric_mean(),
+        (4-1e-4),
+        (4+1e-4),
+        "Geometric Mean Test #1",
+    )
+}
+

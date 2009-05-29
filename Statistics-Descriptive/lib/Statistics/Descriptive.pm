@@ -235,7 +235,9 @@ use vars qw(@ISA $a $b %fields);
   _reserved  => undef,  ##Place holder for this lookup hash
 );
 
-__PACKAGE__->_make_private_accessors([qw(data harmonic_mean median mode)]);
+__PACKAGE__->_make_private_accessors(
+    [qw(data geometric_mean harmonic_mean median mode)]
+);
 __PACKAGE__->_make_accessors([qw(presorted _trimmed_mean_cache)]);
 
 sub _clear_fields
@@ -515,15 +517,26 @@ sub mode
 }
 
 sub geometric_mean {
-  my $self = shift;
-  return $self->{geometric_mean} if defined $self->{geometric_mean};
-  my $gm = 1;
-  my $exponent = 1/$self->count();
-  for (@{ $self->_data() }) {
-    return undef if $_ < 0;
-    $gm *= $_**$exponent;
-  }
-  return $self->{geometric_mean} = $gm;
+    my $self = shift;
+
+    if (!defined($self->_geometric_mean()))
+    {
+        my $gm = 1;
+        my $exponent = 1/$self->count();
+
+        for my $val (@{ $self->_data() })
+        {
+            if ($val < 0)
+            {
+                return undef;
+            }
+            $gm *= $val**$exponent;
+        }
+
+        $self->_geometric_mean($gm);
+    }
+
+    return $self->_geometric_mean();
 }
 
 sub frequency_distribution_ref {
