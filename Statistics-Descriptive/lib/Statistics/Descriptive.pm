@@ -245,7 +245,10 @@ use vars qw(@ISA $a $b %fields);
 );
 
 __PACKAGE__->_make_private_accessors(
-    [qw(data frequency geometric_mean harmonic_mean median mode)]
+    [qw(data frequency geometric_mean harmonic_mean 
+        least_squares_fit median mode
+       )
+    ]
 );
 __PACKAGE__->_make_accessors([qw(presorted _reserved _trimmed_mean_cache)]);
 
@@ -702,7 +705,10 @@ sub least_squares_fit {
   }
 
   $rms = sqrt($rms / $count);
-  return @{ $self->{least_squares_fit} } = ($q, $m, $r, $rms);
+  
+  $self->_least_squares_fit([$q, $m, $r, $rms]);
+
+  return @{ $self->_least_squares_fit() };
 }
 
 1;
