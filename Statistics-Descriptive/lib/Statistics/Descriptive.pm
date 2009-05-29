@@ -235,7 +235,7 @@ use vars qw(@ISA $a $b %fields);
   _reserved  => undef,  ##Place holder for this lookup hash
 );
 
-__PACKAGE__->_make_private_accessors([qw(data median)]);
+__PACKAGE__->_make_private_accessors([qw(data harmonic_mean median)]);
 __PACKAGE__->_make_accessors([qw(presorted _trimmed_mean_cache)]);
 
 sub _clear_fields
@@ -430,19 +430,49 @@ sub trimmed_mean
     return $cache->{$thistm};
 }
 
-sub harmonic_mean {
-  my $self = shift;
-  return $self->{harmonic_mean} if defined $self->{harmonic_mean};
-  my $hs = 0;
-  for (@{ $self->_data() }) {
-    ##Guarantee that there are no divide by zeros
-    return $self->{harmonic_mean} = undef
-      unless abs($_) > $Statistics::Descriptive::Tolerance;
-    $hs += 1/$_;
-  }
-  return $self->{harmonic_mean} = undef
-    unless abs($hs) > $Statistics::Descriptive::Tolerance;
-  return $self->{harmonic_mean} = $self->count()/$hs;
+sub _test_for_too_small_val
+{
+    my $self = shift;
+    my $val = shift;
+
+    return (abs($val) <= $Statistics::Descriptive::Tolerance);
+}
+
+sub _calc_harmonic_mean
+{
+    my $self = shift;
+
+    my $hs = 0;
+
+    foreach my $item ( @{$self->_data()} )
+    {
+        ##Guarantee that there are no divide by zeros
+        if ($self->_test_for_too_small_val($item))
+        {
+            return;
+        }
+
+        $hs += 1/$item;
+    }
+
+    if ($self->_test_for_too_small_val($hs))
+    {
+        return;
+    }
+
+    return $self->count()/$hs;
+}
+
+sub harmonic_mean
+{
+    my $self = shift;
+
+    if (!defined($self->_harmonic_mean()))
+    {
+        $self->_harmonic_mean(scalar($self->_calc_harmonic_mean()));
+    }
+
+    return $self->_harmonic_mean();
 }
 
 sub mode {
