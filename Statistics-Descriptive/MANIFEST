@@ -12,4 +12,5 @@ t/descr.t
 t/freq_distribution-1-rt-34999.t
 t/pod-coverage.t
 t/pod.t
+t/quantile.t
 UserSurvey.txt

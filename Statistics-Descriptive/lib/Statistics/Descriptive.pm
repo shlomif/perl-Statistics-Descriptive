@@ -10,7 +10,7 @@ require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
 		  ##Perl5.  01-03 weren't bug free.
 use vars (qw($VERSION $Tolerance));
 
-$VERSION = '3.0000';
+$VERSION = '3.0100';
 
 $Tolerance = 0.0;
 
@@ -409,6 +409,38 @@ sub median {
         $self->_median($self->_calc_new_median());
     }
     return $self->_median();
+}
+
+sub quantile {
+    my ( $self, $QuantileNumber ) = @_;
+
+    unless ( defined $QuantileNumber and $QuantileNumber =~ m/^0|1|2|3|4$/ ) {
+       carp("Bad quartile type, must be 0, 1, 2, 3 or 4\n");
+       return;
+    }
+    
+    $self->sort_data();
+
+    return $self->_data->[0] if ( $QuantileNumber == 0 );
+
+    my $count = $self->count();
+
+    return $self->_data->[ $count - 1 ] if ( $QuantileNumber == 4 );
+
+    my $K_quantile = ( ( $QuantileNumber / 4 ) * ( $count - 1 ) + 1 );
+    my $F_quantile = $K_quantile - POSIX::floor($K_quantile);
+    $K_quantile = POSIX::floor($K_quantile);
+
+    # interpolation
+    my $aK_quantile     = $self->_data->[ $K_quantile - 1 ];
+    return $aK_quantile if ( $F_quantile == 0 );
+    my $aKPlus_quantile = $self->_data->[$K_quantile];
+    
+    # Calcul quantile
+    my $quantile = $aK_quantile
+      + ( $F_quantile * ( $aKPlus_quantile - $aK_quantile ) );
+
+    return $quantile;
 }
 
 sub _real_calc_trimmed_mean
@@ -915,6 +947,35 @@ L<http://www.ietf.org/rfc/rfc2330.txt> .)
 
 If the percentile method is called in a list context then it will
 also return the index of the percentile.
+
+=item $x = $stat->quantile($Type);
+
+Sorts the data and returns estimates of underlying distribution quantiles based on one 
+or two order statistics from the supplied elements.
+
+This method use the same algorithm as Excel and R language (quantile B<type 7>).
+
+The generic function quantile produces sample quantiles corresponding to the given probabilities.
+
+B<$Type> is an integer value between 0 to 4 :
+
+  0 => zero quartile (Q0) : minimal value
+  1 => first quartile (Q1) : lower quartile = lowest cut off (25%) of data = 25th percentile
+  2 => second quartile (Q2) : median = it cuts data set in half = 50th percentile
+  3 => third quartile (Q3) : upper quartile = highest cut off (25%) of data, or lowest 75% = 75th percentile
+  4 => fourth quartile (Q4) : maximal value
+
+Exemple : 
+
+  my @data = (1..10);
+  my $stat = Statistics::Descriptive::Full->new();
+  $stat->add_data(@data);
+  print $stat->quantile(0); # => 1
+  print $stat->quantile(1); # => 3.25
+  print $stat->quantile(2); # => 5.5
+  print $stat->quantile(3); # => 7.75
+  print $stat->quantile(4); # => 10
+
 
 =item $stat->median();
 
