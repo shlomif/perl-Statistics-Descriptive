@@ -10,11 +10,15 @@ require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
 		  ##Perl5.  01-03 weren't bug free.
 use vars (qw($VERSION $Tolerance));
 
-$VERSION = '3.0101';
+$VERSION = '3.0102';
 
 $Tolerance = 0.0;
 
 package Statistics::Descriptive::Sparse;
+
+use vars qw($VERSION);
+
+$VERSION = '3.0102';
 
 use vars qw(%fields);
 use Carp;
@@ -227,6 +231,10 @@ sub clear {
 1;
 
 package Statistics::Descriptive::Full;
+
+use vars qw($VERSION);
+
+$VERSION = '3.0102';
 
 use Carp;
 

@@ -1,5 +1,9 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0102      June 15, 2010
+    - Add the $VERSION variable to Statistics::Descriptive::Sparse and
+    Statistics::Descriptive::Full. This was done to silence the CPAN indexer.
+
 3.0101      June 15, 2010
     - Moved the trimmed_mean caching test (that used the Benchmark.pm module)
     to rejects/descr.t , because it kept failing.
