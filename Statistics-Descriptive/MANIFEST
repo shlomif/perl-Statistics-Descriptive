@@ -7,6 +7,7 @@ Makefile.PL
 MANIFEST
 META.yml
 README
+rejects/descr.t
 t/00-load.t
 t/descr.t
 t/freq_distribution-1-rt-34999.t

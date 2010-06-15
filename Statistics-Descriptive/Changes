@@ -1,5 +1,9 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0101      June 15, 2010
+    - Moved the trimmed_mean caching test (that used the Benchmark.pm module)
+    to rejects/descr.t , because it kept failing.
+
 3.0100      July 20, 2009
     - Added the quantile method - thanks to Djibril Ousmanou (DJIBEL).
         - https://rt.cpan.org/Ticket/Display.html?id=47948
