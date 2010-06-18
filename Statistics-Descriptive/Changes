@@ -1,6 +1,6 @@
 Revision history for Perl extension Statistics::Descriptive.
 
-3.0200      June 2010
+3.0200      June 18, 2010
     - Added skewness and kurtosis
         - https://rt.cpan.org/Ticket/Display.html?id=58187
         - Thanks to Shawn Laffan.
