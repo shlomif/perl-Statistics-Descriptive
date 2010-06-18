@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 29;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -344,5 +344,72 @@ sub is_between
         (4+1e-4),
         "Geometric Mean Test #1",
     )
+}
+
+{
+    my $stat = Statistics::Descriptive::Full->new();
+    my $expected;
+    
+    $stat->add_data(1 .. 9, 100);
+
+    # TEST
+    $expected = 3.11889574523909;
+    is_between ($stat->skewness(),
+        $expected - 1E-13,
+        $expected + 1E-13,
+        "Skewness of $expected +/- 1E-13"
+    );
+
+    # TEST
+    $expected = 9.79924471616366;
+    is_between ($stat->kurtosis(),
+        $expected - 1E-13,
+        $expected + 1E-13,
+        "Kurtosis of $expected +/- 1E-13"
+    );
+    
+    $stat->add_data(100 .. 110);
+    
+    #  now check that cached skew and kurt values are recalculated
+    
+    # TEST
+    $expected = -0.306705104889384;
+    is_between ($stat->skewness(),
+        $expected - 1E-13,
+        $expected + 1E-13,
+        "Skewness of $expected +/- 1E-13"
+    );
+
+    # TEST
+    $expected = -2.09839497356215;
+    is_between ($stat->kurtosis(),
+        $expected - 1E-13,
+        $expected + 1E-13,
+        "Kurtosis of $expected +/- 1E-13"
+    );
+}
+
+{
+    my $stat = Statistics::Descriptive::Full->new();
+
+    $stat->add_data(1,2);
+    my $def;
+
+    # TEST
+    $def = defined $stat->skewness() ? 1 : 0;
+    is ($def,
+        0,
+        'Skewness is undef for 2 samples'
+    );
+
+    $stat->add_data (1);
+
+    # TEST
+    $def = defined $stat->kurtosis() ? 1 : 0;
+    is ($def,
+        0,
+        'Kurtosis is undef for 3 samples'
+    );
+
 }
 

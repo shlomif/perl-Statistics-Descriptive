@@ -255,6 +255,7 @@ use vars qw(@ISA $a $b %fields);
 __PACKAGE__->_make_private_accessors(
     [qw(data frequency geometric_mean harmonic_mean 
         least_squares_fit median mode
+        skewness kurtosis
        )
     ]
 );
@@ -607,6 +608,71 @@ sub geometric_mean {
     return $self->_geometric_mean();
 }
 
+sub skewness {
+    my $self = shift;
+
+    if (!defined($self->_skewness()))
+    {
+        my $n    = $self->count();
+        my $sd   = $self->standard_deviation();
+        
+        my $skew;
+        
+        #  skip if insufficient records
+        if ( $sd && $n > 2) {
+            
+            my $mean = $self->mean();
+            
+            my $sum_pow3;
+            
+            foreach my $rec ( $self->get_data ) {
+                my $value  = (($rec - $mean) / $sd);
+                $sum_pow3 +=  $value ** 3;
+            }
+            
+            my $correction = $n / ( ($n-1) * ($n-2) );
+            
+            $skew = $correction * $sum_pow3;
+        }
+
+        $self->_skewness($skew);
+    }
+
+    return $self->_skewness();
+}
+
+sub kurtosis {
+    my $self = shift;
+
+    if (!defined($self->_kurtosis()))
+    {
+        my $kurt;
+        
+        my $n  = $self->count();
+        my $sd   = $self->standard_deviation();
+        
+        if ( $sd && $n > 3) {
+
+            my $mean = $self->mean();
+            
+            my $sum_pow4;
+            foreach my $rec ( $self->get_data ) {
+                $sum_pow4 += ( ($rec - $mean ) / $sd ) ** 4;
+            }
+            
+            my $correction1 = ( $n * ($n+1) ) / ( ($n-1) * ($n-2) * ($n-3) );
+            my $correction2 = ( 3  * ($n-1) ** 2) / ( ($n-2) * ($n-3) );
+            
+            $kurt = ( $correction1 * $sum_pow4 ) - $correction2;
+        }
+        
+        $self->_kurtosis($kurt);
+    }
+
+    return $self->_kurtosis();
+}
+
+
 sub frequency_distribution_ref
 {
     my $self = shift;
@@ -902,6 +968,19 @@ If you supply sorted data to the object, call this method to prevent
 the data from being sorted again. The flag is cleared whenever add_data
 is called.  Calling the method without an argument returns the value of
 the flag.
+
+=item $stat->skewness();
+
+Returns the skewness of the data. 
+A value of zero is no skew, negative is a left skewed tail,
+positive is a right skewed tail. 
+This is consistent with Excel.
+
+=item $stat->kurtosis();
+
+Returns the kurtosis of the data.
+Positive is peaked, negative is flattened.
+
 
 =item $x = $stat->percentile(25);
 
