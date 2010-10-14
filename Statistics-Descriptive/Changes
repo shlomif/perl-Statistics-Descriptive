@@ -1,5 +1,6 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0201      October 14, 2010
     - Add some documentation clarifying the 0th percentile return, as it
     returns undef() for representing -inf:
         - Fix https://rt.cpan.org/Ticket/Display.html?id=62055
