@@ -1016,7 +1016,8 @@ for which F(x) >= a given percentage.  So the 50th percentile of the
 example above is 4, since F(4) = 3/6 = 50%; the 25th percentile is
 -2, since F(-5) = 1/6 < 25%, and F(-2) = 2/6 >= 25%; the 100th
 percentile is 18; and the 0th percentile is -infinity, as is the 15th
-percentile.
+percentile, which for ease of handling and backward compatibility is returned
+as undef() by the function.
 
 Care must be taken when using percentiles to summarize a sample,
 because they can lend an unwarranted appearance of more precision
