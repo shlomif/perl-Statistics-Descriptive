@@ -5,6 +5,7 @@ Revision history for Perl extension Statistics::Descriptive.
     returns undef() for representing -inf:
         - Fix https://rt.cpan.org/Ticket/Display.html?id=62055
         - Thanks to Dave Breimann for reporting it.
+    - Add the tag-release.pl to tag a release using Subversion.
 
 3.0200      June 18, 2010
     - Added skewness and kurtosis
