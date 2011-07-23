@@ -1,5 +1,6 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0202      July 23, 2011
     - Moved tag-release.pl to scripts/tag-release.pl (though we now use
     Mercurial instead of Subversion.)
     - Add t/mode.t to test the ->mode() method.
