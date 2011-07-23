@@ -10,6 +10,9 @@ my $builder = Test::Run::Builder->new(
     license             => 'perl',
     dist_author         => 'Shlomi Fish <shlomif@iglu.org.il>',
     dist_version_from   => 'lib/Statistics/Descriptive.pm',
+    configure_requires => {
+        'Module::Build' => '0.36',
+    },
     build_requires => {
         'Benchmark' => 0,
         'lib' => 0,
