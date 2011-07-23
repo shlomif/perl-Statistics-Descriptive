@@ -32,7 +32,7 @@ my $builder = Test::Run::Builder->new(
     {
         resources =>
         {
-            repository => "http://svn.berlios.de/svnroot/repos/web-cpan/Statistics-Descriptive/",
+            repository => "https://bitbucket.org/shlomif/perl-statistics-descriptive",
             homepage => "http://web-cpan.berlios.de/modules/Statistics-Descriptive/",
         },
         keywords =>
