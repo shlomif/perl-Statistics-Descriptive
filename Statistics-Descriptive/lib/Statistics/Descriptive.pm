@@ -1079,9 +1079,11 @@ it will return undef for both of those cases.
 
 Returns the geometric mean of the data.
 
-=item $stat->mode();
+=item my $mode = $stat->mode();
 
-Returns the mode of the data. 
+Returns the mode of the data. The mode is the most commonly occuring datum.
+See L<http://en.wikipedia.org/wiki/Mode_%28statistics%29> . If all values
+occur only once, then mode() will return undef. 
 
 =item $stat->trimmed_mean(ltrim[,utrim]);
 
