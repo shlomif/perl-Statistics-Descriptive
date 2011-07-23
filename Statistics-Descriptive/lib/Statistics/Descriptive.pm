@@ -553,36 +553,30 @@ sub mode
     if (!defined ($self->_mode()))
     {
         my $mode = 0;
-        my $occurances= 0;
-        my $flag = 1;
+        my $occurances = 0;
 
         my %count;
 
         foreach my $item (@{ $self->_data() })
         {
-            $count{$item}++;
-            $flag = 0 if ($count{$item} > 1);
-        }
-
-        #Distribution is flat - no mode exists
-        if ($flag)
-        {
-            return undef;
-        }
-
-        foreach my $val (keys %count)
-        {
-            if ($count{$val} > $occurances)
+            my $count = ++$count{$item};
+            if ($count > $occurances)
             {
-                $occurances = $count{$val};
-                $mode = $val;
+                $mode = $item;
+                $occurances = $count;
             }
         }
 
-        $self->_mode($mode);
+        $self->_mode(
+            ($occurances > 1)
+            ? {exists => 1, mode => $mode}
+            : {exists => 0,}
+        );
     }
 
-    return $self->_mode();
+    my $m = $self->_mode;
+
+    return $m->{'exists'} ? $m->{mode} : undef;
 }
 
 sub geometric_mean {
