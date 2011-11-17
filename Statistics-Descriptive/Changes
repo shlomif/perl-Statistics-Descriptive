@@ -1,5 +1,6 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0203      November 17, 2011
     - Fix https://rt.cpan.org/Ticket/Display.html?id=72495 .
         - percentile should not die and should return undef if there are
         no elements in the collection.
