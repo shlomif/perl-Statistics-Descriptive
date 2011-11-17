@@ -1,6 +1,8 @@
 Statistics-Descriptive/Build
 Statistics-Descriptive/META.yml
+Statistics-Descriptive/META.json
 Statistics-Descriptive/MYMETA.yml
+Statistics-Descriptive/MYMETA.json
 Statistics-Descriptive/Makefile.PL
 Statistics-Descriptive/_build
 Statistics-Descriptive/blib
