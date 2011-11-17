@@ -368,22 +368,26 @@ sub sort_data {
 }
 
 sub percentile {
-  my $self = shift;
-  my $percentile = shift || 0;
-  ##Since we're returning a single value there's no real need
-  ##to cache this.
+    my $self = shift;
+    my $percentile = shift || 0;
+    ##Since we're returning a single value there's no real need
+    ##to cache this.
 
-  ##If the requested percentile is less than the "percentile bin
-  ##size" then return undef.  Check description of RFC 2330 in the
-  ##POD below.
-  my $count = $self->count();
-  return undef if $percentile < 100 / $count;
+    ##If the requested percentile is less than the "percentile bin
+    ##size" then return undef.  Check description of RFC 2330 in the
+    ##POD below.
+    my $count = $self->count();
 
-  $self->sort_data();
-  my $num = $count*$percentile/100;
-  my $index = &POSIX::ceil($num) - 1;
-  my $val = $self->_data->[$index];
-  return wantarray
+    if ((! $count) || ($percentile < 100 / $count))
+    {
+        return undef;
+    }
+
+    $self->sort_data();
+    my $num = $count*$percentile/100;
+    my $index = &POSIX::ceil($num) - 1;
+    my $val = $self->_data->[$index];
+    return wantarray
     ? ($val, $index)
     : $val
     ;

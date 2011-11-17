@@ -1,5 +1,9 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+    - Fix https://rt.cpan.org/Ticket/Display.html?id=72495 .
+        - percentile should not die and should return undef if there are
+        no elements in the collection.
+
 3.0202      July 23, 2011
     - Moved tag-release.pl to scripts/tag-release.pl (though we now use
     Mercurial instead of Subversion.)

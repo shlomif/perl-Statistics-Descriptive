@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 28;
+use Test::More tests => 29;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -413,3 +413,14 @@ sub is_between
 
 }
 
+{
+    # This is a fix for:
+    # https://rt.cpan.org/Ticket/Display.html?id=72495
+    # Thanks to Robert Messer
+    my $stat = Statistics::Descriptive::Full->new();
+
+    my $ret = $stat->percentile(100);
+
+    # TEST
+    ok (!defined($ret), 'Returns undef and does not die.');
+}
