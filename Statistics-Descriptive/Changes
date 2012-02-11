@@ -1,5 +1,15 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0300      February 11, 2012
+    - Now mean() and median() and other routines return undef() if there are
+    no data.
+    - Somewhat incompatible change: some methods that returned undef() under
+    list context now return an empty list (so it will be false).
+        - it is generally not recommended to call such methods in list context
+        as they should always be called in scalar context.
+    - Resolves https://rt.cpan.org/Ticket/Display.html?id=74693
+        - thanks to Shawn Laffan for the report and the patch.
+
 3.0203      November 17, 2011
     - Fix https://rt.cpan.org/Ticket/Display.html?id=72495 .
         - percentile should not die and should return undef if there are

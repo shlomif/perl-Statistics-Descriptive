@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 29;
+use Test::More tests => 50;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -80,7 +80,7 @@ sub is_between
     my $stat = Statistics::Descriptive::Full->new();
     my @results = $stat->least_squares_fit();
     # TEST
-    ok (!scalar(@results), "Results on an non-filled object are empty.");
+    ok (!scalar(@results), "Least-squares results on a non-filled object are empty.");
 
     # test #2
     # data are y = 2*x - 1
@@ -423,4 +423,54 @@ sub is_between
 
     # TEST
     ok (!defined($ret), 'Returns undef and does not die.');
+}
+
+
+
+#  test stats when no data have been added
+{
+    my $stat = Statistics::Descriptive::Full->new();
+    my ($result, $str);
+
+    #  An accessor method for _permitted would be handy,
+    #  or one to get all the stats methods
+    my @methods = qw {
+        mean sum variance standard_deviation
+        min mindex max maxdex sample_range
+        skewness kurtosis median
+        harmonic_mean geometric_mean
+        mode least_squares_fit
+        percentile frequency_distribution 
+    };
+    #  least_squares_fit is handled in an earlier test, so is actually a duplicate here
+    
+    #diag 'Results are undef when no data added';
+    #  need to update next line when new methods are tested here
+    # TEST:$method_count=18
+    foreach my $method (sort @methods) {  
+        $result = $stat->$method;
+        # TEST*$method_count
+        ok (!defined ($result), "$method is undef when object has no data.");
+    }
+
+    #  quantile and trimmed_mean require valid args, so don't test in the method loop
+    my $method = 'quantile';
+    $result = $stat->$method(1);
+    # TEST
+    ok (!defined ($result), "$method is undef when object has no data.");
+    
+    $method = 'trimmed_mean';
+    $result = $stat->$method(0.1);
+    # TEST
+    ok (!defined ($result), "$method is undef when object has no data.");    
+}
+
+#  test SD when only one value added
+{
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data( 1 );
+
+    my $result = $stat->standard_deviation();
+    # TEST
+    ok ($result == 0, "SD is zero when object has one record.");
 }

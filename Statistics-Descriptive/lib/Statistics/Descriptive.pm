@@ -76,15 +76,15 @@ sub _make_private_accessors
 ##Define the fields to be used as methods
 %fields = (
   count			=> 0,
-  mean			=> 0,
-  sum			=> 0,
-  sumsq			=> 0,
+  mean			=> undef,
+  sum			=> undef,
+  sumsq			=> undef,
   min			=> undef,
   max			=> undef,
   mindex		=> undef,
   maxdex		=> undef,
   sample_range		=> undef,
-  variance => undef,
+  variance              => undef,
   );
 
 __PACKAGE__->_make_accessors( [ grep { $_ ne "variance" } keys(%fields) ] );
@@ -176,19 +176,22 @@ sub add_data {
   $self->count($count);
   ##indicator the value is not cached.  Variance isn't commonly enough
   ##used to recompute every single data add.
-  $self->_variance(undef());
+  $self->_variance(undef);
   return 1;
 }
 
 sub standard_deviation {
   my $self = shift;  ##Myself
-  return undef if (!$self->count());
+  return if (!$self->count());
   return sqrt($self->variance());
 }
 
 ##Return variance; if needed, compute and cache it.
 sub variance {
   my $self = shift;  ##Myself
+
+  return if (!$self->count());
+  
   my $div = @_ ? 0 : 1;
   my $count = $self->count();
   if ($count < 1 + $div) {
@@ -380,7 +383,7 @@ sub percentile {
 
     if ((! $count) || ($percentile < 100 / $count))
     {
-        return undef;
+        return;  #  allow for both scalar and list context
     }
 
     $self->sort_data();
@@ -415,6 +418,8 @@ sub _calc_new_median
 sub median {
     my $self = shift;
 
+    return if !$self->count;    
+    
     ##Cached?
     if (! defined($self->_median()))
     {
@@ -431,6 +436,9 @@ sub quantile {
        carp("Bad quartile type, must be 0, 1, 2, 3 or 4\n");
        return;
     }
+    
+    #  check data count after the args are checked - should help debugging
+    return if !$self->count;  
     
     $self->sort_data();
 
@@ -493,6 +501,9 @@ sub trimmed_mean
     {
         ($lower,$upper) = ($_[0],$_[1]);
     }
+
+    #  check data count after the args
+    return if !$self->count;    
 
     ##Cache
     my $thistm = join ':',$lower,$upper;
@@ -585,6 +596,8 @@ sub mode
 
 sub geometric_mean {
     my $self = shift;
+    
+    return if !$self->count;
 
     if (!defined($self->_geometric_mean()))
     {
