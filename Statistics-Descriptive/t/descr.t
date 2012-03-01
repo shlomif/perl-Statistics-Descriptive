@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 50;
+use Test::More tests => 52;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -473,4 +473,25 @@ sub is_between
     my $result = $stat->standard_deviation();
     # TEST
     ok ($result == 0, "SD is zero when object has one record.");
+}
+
+# Test function returns undef in list context when no data added.
+# The test itself is almost redundant.
+# Fixes https://rt.cpan.org/Ticket/Display.html?id=74890
+{
+    my $stat = Statistics::Descriptive::Full->new();
+
+    # TEST
+    is_deeply(
+        [ $stat->median(), ],
+        [ undef() ],
+        "->median() Returns undef in list-context.",
+    );
+
+    # TEST
+    is_deeply(
+        [ $stat->standard_deviation(), ],
+        [ undef() ],
+        "->standard_deviation() Returns undef in list-context.",
+    );
 }

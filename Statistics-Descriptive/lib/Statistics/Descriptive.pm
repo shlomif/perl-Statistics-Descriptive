@@ -182,7 +182,7 @@ sub add_data {
 
 sub standard_deviation {
   my $self = shift;  ##Myself
-  return if (!$self->count());
+  return undef if (!$self->count());
   return sqrt($self->variance());
 }
 
@@ -190,7 +190,7 @@ sub standard_deviation {
 sub variance {
   my $self = shift;  ##Myself
 
-  return if (!$self->count());
+  return undef if (!$self->count());
   
   my $div = @_ ? 0 : 1;
   my $count = $self->count();
@@ -418,7 +418,7 @@ sub _calc_new_median
 sub median {
     my $self = shift;
 
-    return if !$self->count;    
+    return undef if !$self->count;    
     
     ##Cached?
     if (! defined($self->_median()))
@@ -438,7 +438,7 @@ sub quantile {
     }
     
     #  check data count after the args are checked - should help debugging
-    return if !$self->count;  
+    return undef if !$self->count;  
     
     $self->sort_data();
 
@@ -503,7 +503,7 @@ sub trimmed_mean
     }
 
     #  check data count after the args
-    return if !$self->count;    
+    return undef if !$self->count;    
 
     ##Cache
     my $thistm = join ':',$lower,$upper;
@@ -597,7 +597,7 @@ sub mode
 sub geometric_mean {
     my $self = shift;
     
-    return if !$self->count;
+    return undef if !$self->count;
 
     if (!defined($self->_geometric_mean()))
     {

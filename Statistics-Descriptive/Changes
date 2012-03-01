@@ -1,5 +1,12 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0400      March 01, 2012
+    - Fix https://rt.cpan.org/Ticket/Display.html?id=74890
+        - some function should return undef() in list context so they can
+        be easily assigned to values in hash initialisations.
+        - thanks to SLAFFAN for a preliminary patch which was modified
+        by SHLOMIF (the current Statistics-Descriptive maintainer).
+
 3.0300      February 11, 2012
     - Now mean() and median() and other routines return undef() if there are
     no data.
