@@ -8,11 +8,12 @@ use warnings;
 require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
 		  ##Not only that, but it's the latest "safe" version of
 		  ##Perl5.  01-03 weren't bug free.
-use vars (qw($VERSION $Tolerance));
+use vars (qw($VERSION $Tolerance $Min_samples_number));
 
 $VERSION = '3.0400';
 
 $Tolerance = 0.0;
+$Min_samples_number = 4;
 
 package Statistics::Descriptive::Sparse;
 
@@ -352,6 +353,60 @@ sub add_data {
 sub get_data {
   my $self = shift;
   return @{ $self->_data() };
+}
+
+sub get_data_without_outliers {
+  my $self = shift;
+
+  if ($self->count() < $Statistics::Descriptive::Min_samples_number) {
+    carp("Need at least $Statistics::Descriptive::Min_samples_number samples\n");
+    return;
+  }
+
+  if (!defined $self->{_outlier_filter}) {
+    carp("Outliers filter not defined\n");
+    return;
+  }
+
+  my $outlier_candidate_index = $self->_outlier_candidate_index;
+  my $possible_outlier = ($self->_data())->[$outlier_candidate_index];
+  my $is_outlier = $self->{_outlier_filter}->($possible_outlier);
+
+  return $self->get_data unless $is_outlier;
+  # Removing the outlier from the dataset
+  my @good_indexes = grep { $_ != $outlier_candidate_index } (0 .. $self->count() - 1);
+
+  my @data = $self->get_data;
+  my @filtered_data = @data[@good_indexes];
+  return @filtered_data;
+}
+
+sub set_filter {
+  my ($self, $code_ref) = @_;
+
+  if (!$code_ref || ref($code_ref) ne "CODE") {
+    carp("Need to pass a code reference");
+    return;
+  }
+
+  $self->{_outlier_filter} = $code_ref;
+  return 1;
+}
+
+sub _outlier_candidate_index {
+  my $self = shift;
+
+  my $mean = $self->mean();
+  my $outlier_candidate_index = 0;
+  my $max_std_deviation = abs(($self->_data())->[0] - $mean);
+  foreach my $idx (1 .. ($self->count() - 1) ) {
+    my $curr_value = ($self->_data())->[$idx];
+    if ($max_std_deviation  <  abs($curr_value - $mean) ) {
+      $outlier_candidate_index = $idx;
+      $max_std_deviation = abs($curr_value - $mean);
+    }
+  }
+  return $outlier_candidate_index;
 }
 
 sub sort_data {
@@ -962,6 +1017,29 @@ not changed>
 =item $stat->get_data();
 
 Returns a copy of the data array.
+
+=item $stat->get_data_without_outliers();
+
+Returns a copy of the data array without outliers. The number minimum of
+samples to apply the outlier filtering is C<$Statistics::Descriptive::Min_samples_number>,
+4 by default.
+
+A function to detect outliers need to be defined (see C<set_filter>),
+otherwise the function will return an undef value.
+
+The filtering will act only on the most extreme value of the data set
+(i.e.: value with the highest absolute standard deviation from the mean).
+
+If there is the need to remove more than one outlier, the filtering
+need to be re-run for the next most extreme value with the initial outlier removed.
+
+This is not always needed since the test (for example Grubb's test) usually can only detect
+the most exreme value. If there is more than one extreme case in a set,
+then the standard deviation will be high enough to make neither case an outlier.
+
+=item $stat->set_filter();
+
+Set the function (test) to filter out the outlier.
 
 =item $stat->sort_data();
 
