@@ -14,6 +14,7 @@ t/00-load.t
 t/descr.t
 t/freq_distribution-1-rt-34999.t
 t/mode.t
+t/outliers.t
 t/pod-coverage.t
 t/pod.t
 t/quantile.t

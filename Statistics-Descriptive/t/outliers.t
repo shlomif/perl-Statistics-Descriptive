@@ -9,6 +9,8 @@ use Statistics::Descriptive;
 
 sub foo {return;};
 
+local $SIG{__WARN__} = sub { };
+
 {
     # testing set_outlier_filter
     my $stat = Statistics::Descriptive::Full->new();
