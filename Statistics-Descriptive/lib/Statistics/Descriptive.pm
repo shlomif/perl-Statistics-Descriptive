@@ -1052,22 +1052,23 @@ code reference), C<1> otherwise.
 
 Example #1: Undefined code reference
 
- my $stat = Statistics::Descriptive::Full->new();
- $stat->add_data(1, 2, 3, 4, 5);
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data(1, 2, 3, 4, 5);
 
- print $stat->set_outlier_filter(); # => undef
+    print $stat->set_outlier_filter(); # => undef
 
 =item
 
 Example #2: Valid code reference
 
- sub outlier_filter { return $_[0] > 1; }
+    sub outlier_filter { return $_[0] > 1; }
 
- my $stat = Statistics::Descriptive::Full->new();
- $stat->add_data( 1, 1, 1, 100, 1, );
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data( 1, 1, 1, 100, 1, );
   
- print $stat->set_outlier_filter( \&outlier_filter ); # => 1
- my @filtered_data = $stat->get_data_without_outliers(); # @filtered_data is (1, 1, 1, 1)
+    print $stat->set_outlier_filter( \&outlier_filter ); # => 1
+    my @filtered_data = $stat->get_data_without_outliers();
+    # @filtered_data is (1, 1, 1, 1)
 
 In this example the series is really simple and the outlier filter function as well.
 For more complex series the outlier filter function might be more complex
