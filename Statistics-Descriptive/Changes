@@ -1,5 +1,10 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+    - Add the get_data_without_outliers() and the set_outlier_filter()
+    methods.
+        - See https://bitbucket.org/barbasa/perl-statistics-descriptive/overview
+        - Thanks to Fabio Ponciroli
+
 3.0400      March 01, 2012
     - Fix https://rt.cpan.org/Ticket/Display.html?id=74890
         - some function should return undef() in list context so they can
