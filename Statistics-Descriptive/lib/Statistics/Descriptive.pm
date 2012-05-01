@@ -356,57 +356,57 @@ sub get_data {
 }
 
 sub get_data_without_outliers {
-  my $self = shift;
+    my $self = shift;
 
-  if ($self->count() < $Statistics::Descriptive::Min_samples_number) {
-    carp("Need at least $Statistics::Descriptive::Min_samples_number samples\n");
-    return;
-  }
+    if ($self->count() < $Statistics::Descriptive::Min_samples_number) {
+        carp("Need at least $Statistics::Descriptive::Min_samples_number samples\n");
+        return;
+    }
 
-  if (!defined $self->{_outlier_filter}) {
-    carp("Outliers filter not defined\n");
-    return;
-  }
+    if (!defined $self->{_outlier_filter}) {
+        carp("Outliers filter not defined\n");
+        return;
+    }
 
-  my $outlier_candidate_index = $self->_outlier_candidate_index;
-  my $possible_outlier = ($self->_data())->[$outlier_candidate_index];
-  my $is_outlier = $self->{_outlier_filter}->($possible_outlier);
+    my $outlier_candidate_index = $self->_outlier_candidate_index;
+    my $possible_outlier = ($self->_data())->[$outlier_candidate_index];
+    my $is_outlier = $self->{_outlier_filter}->($possible_outlier);
 
-  return $self->get_data unless $is_outlier;
-  # Removing the outlier from the dataset
-  my @good_indexes = grep { $_ != $outlier_candidate_index } (0 .. $self->count() - 1);
+    return $self->get_data unless $is_outlier;
+    # Removing the outlier from the dataset
+    my @good_indexes = grep { $_ != $outlier_candidate_index } (0 .. $self->count() - 1);
 
-  my @data = $self->get_data;
-  my @filtered_data = @data[@good_indexes];
-  return @filtered_data;
+    my @data = $self->get_data;
+    my @filtered_data = @data[@good_indexes];
+    return @filtered_data;
 }
 
-sub set_filter {
-  my ($self, $code_ref) = @_;
+sub set_outlier_filter {
+    my ($self, $code_ref) = @_;
 
-  if (!$code_ref || ref($code_ref) ne "CODE") {
-    carp("Need to pass a code reference");
-    return;
-  }
+    if (!$code_ref || ref($code_ref) ne "CODE") {
+        carp("Need to pass a code reference");
+        return;
+    }
 
-  $self->{_outlier_filter} = $code_ref;
-  return 1;
+    $self->{_outlier_filter} = $code_ref;
+    return 1;
 }
 
 sub _outlier_candidate_index {
-  my $self = shift;
+    my $self = shift;
 
-  my $mean = $self->mean();
-  my $outlier_candidate_index = 0;
-  my $max_std_deviation = abs(($self->_data())->[0] - $mean);
-  foreach my $idx (1 .. ($self->count() - 1) ) {
-    my $curr_value = ($self->_data())->[$idx];
-    if ($max_std_deviation  <  abs($curr_value - $mean) ) {
-      $outlier_candidate_index = $idx;
-      $max_std_deviation = abs($curr_value - $mean);
+    my $mean = $self->mean();
+    my $outlier_candidate_index = 0;
+    my $max_std_deviation = abs(($self->_data())->[0] - $mean);
+    foreach my $idx (1 .. ($self->count() - 1) ) {
+        my $curr_value = ($self->_data())->[$idx];
+        if ($max_std_deviation  <  abs($curr_value - $mean) ) {
+            $outlier_candidate_index = $idx;
+            $max_std_deviation = abs($curr_value - $mean);
+        }
     }
-  }
-  return $outlier_candidate_index;
+    return $outlier_candidate_index;
 }
 
 sub sort_data {
@@ -1024,7 +1024,7 @@ Returns a copy of the data array without outliers. The number minimum of
 samples to apply the outlier filtering is C<$Statistics::Descriptive::Min_samples_number>,
 4 by default.
 
-A function to detect outliers need to be defined (see C<set_filter>),
+A function to detect outliers need to be defined (see C<set_outlier_filter>),
 otherwise the function will return an undef value.
 
 The filtering will act only on the most extreme value of the data set
@@ -1037,9 +1037,43 @@ This is not always needed since the test (for example Grubb's test) usually can 
 the most exreme value. If there is more than one extreme case in a set,
 then the standard deviation will be high enough to make neither case an outlier.
 
-=item $stat->set_filter();
+=item $stat->set_outlier_filter($code_ref);
 
-Set the function (test) to filter out the outlier.
+Set the function to filter out the outlier.
+
+C<$code_ref> is the reference to the subroutine implemeting the filtering function.
+
+Returns C<undef> for invalid values of C<$code_ref> (i.e.: not defined or not a
+code reference), C<1> otherwise.
+
+=over 4
+
+=item
+
+Example #1: Undefined code reference
+
+ my $stat = Statistics::Descriptive::Full->new();
+ $stat->add_data(1, 2, 3, 4, 5);
+
+ print $stat->set_outlier_filter(); # => undef
+
+=item
+
+Example #2: Valid code reference
+
+ sub outlier_filter { return $_[0] > 1; }
+
+ my $stat = Statistics::Descriptive::Full->new();
+ $stat->add_data( 1, 1, 1, 100, 1, );
+  
+ print $stat->set_outlier_filter( \&outlier_filter ); # => 1
+ my @filtered_data = $stat->get_data_without_outliers(); # @filtered_data is (1, 1, 1, 1)
+
+In this example the series is really simple and the outlier filter function as well.
+For more complex series the outlier filter function might be more complex
+(see Grubbs' test for outliers).
+
+=back
 
 =item $stat->sort_data();
 
