@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 11;
 
 use Statistics::Descriptive;
 
@@ -63,7 +63,7 @@ local $SIG{__WARN__} = sub { };
     $stat->add_data( 1, 2, 3, 4, 100, 6, 7, 8 );
 
     # We force the filter function to always detect outliers for this data set
-    $stat->set_outlier_filter( sub {$_[0] > 0} );
+    $stat->set_outlier_filter( sub {$_[1] > 0} );
     my @results = $stat->get_data_without_outliers();
 
     # Note that 100 has been filtered out from the data set
@@ -73,6 +73,26 @@ local $SIG{__WARN__} = sub { };
         [1, 2, 3, 4, 6, 7, 8, ],
         'get_data_without_outliers: remove outliers',
     );
+
+}
+
+my ($first_val, $second_val);
+sub check_params { ($first_val, $second_val) = @_; }
+
+{
+    # testing params passed to outlier filter
+    my $stat = Statistics::Descriptive::Full->new();
+
+    # 100 is definitively the candidate to be an outlier in this series
+    $stat->add_data( 1, 2, 3, 4, 100, 6, 7, 8 );
+
+    $stat->set_outlier_filter( \&check_params );
+    my @results = $stat->get_data_without_outliers();
+
+    # TEST
+    isa_ok ($first_val, 'Statistics::Descriptive::Full', 'first param of outlier filter ok');
+    # TEST
+    is ($second_val, 100, 'second param of outlier filter ok');
 
 }
 

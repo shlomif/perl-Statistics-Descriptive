@@ -389,7 +389,7 @@ sub get_data_without_outliers {
 
     my $outlier_candidate_index = $self->_outlier_candidate_index;
     my $possible_outlier = ($self->_data())->[$outlier_candidate_index];
-    my $is_outlier = $self->{_outlier_filter}->($possible_outlier);
+    my $is_outlier = $self->{_outlier_filter}->($self, $possible_outlier);
 
     return $self->get_data unless $is_outlier;
     # Removing the outlier from the dataset
@@ -1105,7 +1105,7 @@ Example #1: Undefined code reference
 
 Example #2: Valid code reference
 
-    sub outlier_filter { return $_[0] > 1; }
+    sub outlier_filter { return $_[1] > 1; }
 
     my $stat = Statistics::Descriptive::Full->new();
     $stat->add_data( 1, 1, 1, 100, 1, );
@@ -1117,6 +1117,10 @@ Example #2: Valid code reference
 In this example the series is really simple and the outlier filter function as well.
 For more complex series the outlier filter function might be more complex
 (see Grubbs' test for outliers).
+
+The outlier filter function will receive as first parameter the Statistics::Descriptive::Full object,
+as second the value of the candidate outlier. Having the object in the function
+might be useful for complex filters where statistics property are needed (again see Grubbs' test for outlier).
 
 =back
 
