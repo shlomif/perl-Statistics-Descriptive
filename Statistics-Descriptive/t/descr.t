@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 52;
+use Test::More tests => 54;
 
 use Benchmark;
 use Statistics::Descriptive;
@@ -494,4 +494,25 @@ sub is_between
         [ undef() ],
         "->standard_deviation() Returns undef in list-context.",
     );
+}
+
+{
+    my $stats = Statistics::Descriptive::Full->new();
+
+    $stats->add_data_with_samples([{1 => 10}, {2 => 20}, {3 => 30}, {4 => 40}, {5 => 50}]);
+
+    # TEST
+    is_deeply(
+        $stats->_data(),
+        [ 1, 2, 3, 4, 5 ],
+        'add_data_with_samples: data set is correct',
+    );
+
+    # TEST
+    is_deeply(
+        $stats->_samples(),
+        [ 10, 20, 30, 40, 50 ],
+        'add_data_with_samples: samples are correct',
+    );
+
 }
