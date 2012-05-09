@@ -2,8 +2,8 @@ package Statistics::Descriptive::Smoother::Weightedexponential;
 use strict;
 use warnings;
 
-use base 'Statistics::Descriptive::Smoother';
 use Carp;
+use base 'Statistics::Descriptive::Smoother';
 
 our $VERSION = '3.0500';
 

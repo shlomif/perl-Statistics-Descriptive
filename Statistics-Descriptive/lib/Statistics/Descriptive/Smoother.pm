@@ -2,6 +2,7 @@ package Statistics::Descriptive::Smoother;
 
 use strict;
 use warnings;
+
 use Carp;
 
 our $VERSION = '3.0500';

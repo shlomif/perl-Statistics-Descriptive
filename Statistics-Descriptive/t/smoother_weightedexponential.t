@@ -25,7 +25,7 @@ my @original_samples = qw/100 50 100 50 100 50 100 50 100 50/;
     my @smoothed_data = $smoother->get_smoothed_data();
 
     # When the smoothing coefficient is 0 the series is not smoothed
-    #TEST
+    # TEST
     is_deeply( \@smoothed_data, \@original_data, 'No smoothing C=0');
 }
 
@@ -43,7 +43,7 @@ my @original_samples = qw/100 50 100 50 100 50 100 50 100 50/;
 
     # When the smoothing coefficient is 1 the series is universally equal to the initial unsmoothed value
     my @expected_values = map { $original_data[0] } 1 .. $smoother->{count};
-    #TEST
+    # TEST
     is_deeply( \@smoothed_data, \@expected_values, 'Max smoothing C=1');
 }
 
@@ -71,7 +71,7 @@ my @original_samples = qw/100 50 100 50 100 50 100 50 100 50/;
                     8.73457937329917
     /; 
 
-    #TEST
+    # TEST
     is_deeply( \@smoothed_data, \@expected_values, 'Smoothing with C=0.5');
 }
 
@@ -85,7 +85,7 @@ my @original_samples = qw/100 50 100 50 100 50 100 50 100 50/;
            samples  => [1,2,3],
     });
 
-    #TEST
+    # TEST
     is ( $smoother, undef, 'Different number of samples and data');
 }
 

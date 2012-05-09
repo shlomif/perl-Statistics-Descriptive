@@ -56,6 +56,6 @@ my @original_data = qw/1 2 3 4 5 6 7 8 9 10/;
 
     my @smoothed_data = $stats->get_smoothed_data();
 
-    #TEST
+    # TEST
     is_deeply( \@smoothed_data, \@expected_values, 'Smoothing with C=0.5');
 }

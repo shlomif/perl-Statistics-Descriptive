@@ -20,7 +20,7 @@ local $SIG{__WARN__} = sub { };
            samples  => [100, 100, 100],
     });
 
-    #TEST
+    # TEST
     isa_ok ($smoother, 'Statistics::Descriptive::Smoother::Exponential', 'Exponential class correctly created');
 }
 
@@ -33,7 +33,7 @@ local $SIG{__WARN__} = sub { };
            samples  => [100, 100, 100],
     });
 
-    #TEST
+    # TEST
     isa_ok ($smoother, 'Statistics::Descriptive::Smoother::Weightedexponential', 'Weightedexponential class correctly created');
     
 }
@@ -41,7 +41,7 @@ local $SIG{__WARN__} = sub { };
 {
 
     # Test invalid smoothing method
-    #TEST
+    # TEST
     dies_ok (sub {
                 Statistics::Descriptive::Smoother->instantiate({
                         method   => 'invalid_method',
@@ -64,7 +64,7 @@ local $SIG{__WARN__} = sub { };
            samples  => [100, 100, 100],
         });
 
-    #TEST
+    # TEST
     is ($smoother_neg, undef, 'Invalid coefficient: < 0');
 
     my $smoother_pos = Statistics::Descriptive::Smoother->instantiate({
@@ -74,7 +74,7 @@ local $SIG{__WARN__} = sub { };
            samples  => [100, 100, 100],
         });
 
-    #TEST
+    # TEST
     is ($smoother_pos, undef, 'Invalid coefficient: > 1');
  
 }
@@ -89,7 +89,7 @@ local $SIG{__WARN__} = sub { };
            samples  => [100],
         });
 
-    #TEST
+    # TEST
     is ($smoother, undef, 'Insufficient number of samples');
 
 }
@@ -104,23 +104,23 @@ local $SIG{__WARN__} = sub { };
            samples  => [100, 100, 100],
         });
 
-    #TEST
+    # TEST
     is ($smoother->get_smoothing_coeff(), 0.5, 'get_smoothing_coeff');
 
     my $ok = $smoother->set_smoothing_coeff(0.7);
 
-    #TEST
+    # TEST
     ok ($ok, 'set_smoothing_coeff: set went fine');
 
-    #TEST
+    # TEST
     is ($smoother->get_smoothing_coeff(), 0.7, 'set_smoothing_coeff: correct value set');
 
     my $ok2 = $smoother->set_smoothing_coeff(123);
 
-    #TEST
+    # TEST
     is ($ok2, undef, 'set_smoothing_coeff: set failed');
 
-    #TEST
+    # TEST
     is ($smoother->get_smoothing_coeff(), 0.7, 'set_smoothing_coeff: value not modified after failure');
 
 }
