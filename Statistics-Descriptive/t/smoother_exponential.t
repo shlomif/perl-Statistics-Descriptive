@@ -7,8 +7,8 @@ use Test::More tests => 3;
 
 use Statistics::Descriptive::Smoother;
 
-my @original_data       = qw/1 2 3 4 5 6 7 8 9 10/;
-my @original_samples    = qw/3 3 3 3 3 3 3 3 3 3/;
+my @original_data       = (1 .. 10);
+my @original_samples    = (3, 3, 3, 3, 3, 3, 3, 3, 3, 3,);
 
 {
 
@@ -56,18 +56,18 @@ my @original_samples    = qw/3 3 3 3 3 3 3 3 3 3/;
     });
 
     my @smoothed_data = $smoother->get_smoothed_data();
-    my @expected_values = qw/
-          1
-          1.5
-          2.25
-          3.125
-          4.0625
-          5.03125
-          6.015625
-          7.0078125
-          8.00390625
-          9.001953125
-    /; 
+    my @expected_values = (
+          1,
+          1.5,
+          2.25,
+          3.125,
+          4.0625,
+          5.03125,
+          6.015625,
+          7.0078125,
+          8.00390625,
+          9.001953125,
+    );
 
     # TEST
     is_deeply( \@smoothed_data, \@expected_values, 'Smoothing with C=0.5');

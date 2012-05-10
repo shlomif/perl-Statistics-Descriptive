@@ -10,7 +10,7 @@ use Statistics::Descriptive;
 
 local $SIG{__WARN__} = sub { };
 
-my @original_data = qw/1 2 3 4 5 6 7 8 9 10/;
+my @original_data = (1 .. 10);
 
 {
     # testing set_smoother
@@ -41,18 +41,18 @@ my @original_data = qw/1 2 3 4 5 6 7 8 9 10/;
            coeff    => 0.5,
     });
 
-    my @expected_values = qw/
-          1
-          1.5
-          2.25
-          3.125
-          4.0625
-          5.03125
-          6.015625
-          7.0078125
-          8.00390625
-          9.001953125
-    /; 
+    my @expected_values = (
+          1,
+          1.5,
+          2.25,
+          3.125,
+          4.0625,
+          5.03125,
+          6.015625,
+          7.0078125,
+          8.00390625,
+          9.001953125,
+    );
 
     my @smoothed_data = $stats->get_smoothed_data();
 

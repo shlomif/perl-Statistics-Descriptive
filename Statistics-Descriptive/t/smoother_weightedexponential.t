@@ -9,8 +9,8 @@ use Statistics::Descriptive::Smoother;
 
 local $SIG{__WARN__} = sub { };
 
-my @original_data    = qw/1 2 3 4 5 6 7 8 9 10/;
-my @original_samples = qw/100 50 100 50 100 50 100 50 100 50/;
+my @original_data    = (1 .. 10);
+my @original_samples = (100, 50, 100, 50, 100, 50, 100, 50, 100, 50,);
 
 {
 
@@ -58,18 +58,18 @@ my @original_samples = qw/100 50 100 50 100 50 100 50 100 50/;
     });
 
     my @smoothed_data = $smoother->get_smoothed_data();
-    my @expected_values = qw/
-                    1
-                    1.33333333333333
-                    2.24242424242424
-                    2.85944551901999
-                    4.0651836704636
-                    4.75526654493058
-                    6.03174342835728
-                    6.7367839208657
-                    8.02706266125788
-                    8.73457937329917
-    /; 
+    my @expected_values = (
+                    1,
+                    1.33333333333333,
+                    2.24242424242424,
+                    2.85944551901999,
+                    4.0651836704636,
+                    4.75526654493058,
+                    6.03174342835728,
+                    6.7367839208657,
+                    8.02706266125788,
+                    8.73457937329917,
+    );
 
     # TEST
     is_deeply( \@smoothed_data, \@expected_values, 'Smoothing with C=0.5');
