@@ -22,8 +22,8 @@ use vars qw($VERSION);
 $VERSION = '3.0500';
 
 use vars qw(%fields);
-use Statistics::Descriptive::Smoother;
 use Carp;
+use Statistics::Descriptive::Smoother;
 
 sub _make_accessors
 {
@@ -241,10 +241,9 @@ use vars qw($VERSION);
 
 $VERSION = '3.0500';
 
-use Statistics::Descriptive::Smoother;
 use Carp;
-
 use POSIX ();
+use Statistics::Descriptive::Smoother;
 
 use vars qw(@ISA $a $b %fields);
 
