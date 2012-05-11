@@ -28,7 +28,7 @@ sub instantiate {
     eval "require $sub_class";
     die "No such class $sub_class: $@" if $@;
 
-    return $sub_class->new({
+    return $sub_class->_new({
         data       => $ra_data,
         samples    => $ra_samples,
         count      => scalar @$ra_data,

@@ -7,7 +7,7 @@ use base 'Statistics::Descriptive::Smoother';
 
 our $VERSION = '3.0500';
 
-sub new {
+sub _new {
     my ($class, $args) = @_;
 
     if (scalar @{$args->{data}} != scalar @{$args->{samples}}) {
