@@ -6,7 +6,6 @@ use warnings;
 use Test::More tests => 11;
 
 use Statistics::Descriptive::Smoother;
-use Test::Exception;
 
 local $SIG{__WARN__} = sub { };
 
@@ -41,16 +40,19 @@ local $SIG{__WARN__} = sub { };
 {
 
     # Test invalid smoothing method
-    # TEST
-    dies_ok (sub {
+    eval
+    {
                 Statistics::Descriptive::Smoother->instantiate({
                         method   => 'invalid_method',
                         coeff    => 0,
                         data     => [1,2,3],
                         samples  => [100, 100, 100],
-            });}, 
-            'Invalid method');
-    
+            });
+    };
+
+    # TEST
+    ok ($@, 'Invalid method');
+
 }
 
 {
