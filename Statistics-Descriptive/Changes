@@ -9,6 +9,8 @@ Revision history for Perl extension Statistics::Descriptive.
         lib/Statistics/Descriptive/Smoother/Weightedexponential.pm 
         modules.
         - Thanks to Fabio Ponciroli
+    - Add the scripts/bump-version-number.pl to facilitate bumping the
+    version number.
 
 3.0500      May 03, 2012
     - Add the get_data_without_outliers() and the set_outlier_filter()
