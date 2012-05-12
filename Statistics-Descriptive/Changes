@@ -1,5 +1,6 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0602      May 12, 2012
     - Correct a typo:
         - https://rt.cpan.org/Ticket/Display.html?id=77145
         - Thanks to Salvatore Bonaccorso and the Debian Perl Group
