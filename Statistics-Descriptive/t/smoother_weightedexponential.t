@@ -74,7 +74,7 @@ my @original_samples = (100, 50, 100, 50, 100, 50, 100, 50, 100, 50,);
                     8.73457937329917,
     );
 
-    # TEST
+    # TEST*10
     is_array_between( \@smoothed_data, \@expected_values, 1E-13, 1E+13, 'Smoothing with C=0.5');
 }
 
