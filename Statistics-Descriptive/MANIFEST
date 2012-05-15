@@ -14,6 +14,7 @@ lib/Statistics/Descriptive/Smoother/Weightedexponential.pm
 rejects/descr.t
 scripts/tag-release.pl
 scripts/bump-version-number.pl
+t/lib/Utils.pm
 t/00-load.t
 t/descr.t
 t/descr_smooth_methods.t
