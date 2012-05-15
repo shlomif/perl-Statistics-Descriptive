@@ -15,8 +15,7 @@ sub is_between {
     my ($have, $want_bottom, $want_top, $blurb) = @_;
 
     ok (
-        (($have >= $want_bottom) &&
-        ($want_top >= $have)),
+        _is_between($have, $want_bottom, $want_top),
         $blurb
     );
 }
@@ -26,15 +25,28 @@ sub is_array_between {
 
     my ($got_array_ref, $expected_array_ref, $low_tolerance, $high_tolerance, $blurb) = @_;
 
-    my $i = 0;
-    foreach my $got_val (@$got_array_ref) {
-        is_between ($got_val,
-                    $expected_array_ref->[$i] - $low_tolerance,
-                    $expected_array_ref->[$i] + $high_tolerance,
-                    "$blurb - ".$expected_array_ref->[$i]
-        );
-        $i++;
+    my $success = 1;
+    if (scalar @$expected_array_ref != scalar @$got_array_ref) {
+        $success = 0;
+        diag('Arrays have different lengths');
     }
+    else {
+        for my $idx (0 .. $#$got_array_ref) {
+            my $expected_bottom = $expected_array_ref->[$idx] - $low_tolerance;
+            my $expected_top = $expected_array_ref->[$idx] + $high_tolerance;
+            unless (_is_between($got_array_ref->[$idx], $expected_bottom, $expected_top)) {
+                $success = 0;
+                diag(<<"EOF");
+Value $idx is out of range:
+Got: [$got_array_ref->[$idx]]
+Expected: [$expected_bottom, $expected_top, $expected_array_ref->[$idx]]
+EOF
+
+                last;
+            }
+        }
+    }
+    ok($success, $blurb);
 }
 
 sub compare_hash_by_ranges
@@ -88,6 +100,12 @@ EOF
     }
 
     ok($success, $blurb);
+}
+
+sub _is_between {
+    my ($have, $want_bottom, $want_top,) = @_;
+
+    return (($have >= $want_bottom) && ($want_top >= $have));
 }
 
 1;

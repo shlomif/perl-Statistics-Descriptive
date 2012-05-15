@@ -6,7 +6,7 @@ use warnings;
 use lib 't/lib';
 use Utils qw/is_array_between/;
 
-use Test::More tests => 13;
+use Test::More tests => 4;
 
 use Statistics::Descriptive::Smoother;
 
@@ -74,7 +74,7 @@ my @original_samples = (100, 50, 100, 50, 100, 50, 100, 50, 100, 50,);
                     8.73457937329917,
     );
 
-    # TEST*10
+    # TEST
     is_array_between( \@smoothed_data, \@expected_values, 1E-13, 1E-13, 'Smoothing with C=0.5');
 }
 
