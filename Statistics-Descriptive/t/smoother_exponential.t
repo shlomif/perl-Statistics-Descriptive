@@ -3,7 +3,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use lib 't/lib';
+use Utils qw/is_array_between/;
+
+use Test::More tests => 12;
 
 use Statistics::Descriptive::Smoother;
 
@@ -70,7 +73,7 @@ my @original_samples    = (3, 3, 3, 3, 3, 3, 3, 3, 3, 3,);
     );
 
     # TEST
-    is_deeply( \@smoothed_data, \@expected_values, 'Smoothing with C=0.5');
+    is_array_between( \@smoothed_data, \@expected_values, 1E-13, 1E+13, 'Smoothing with C=0.5');
 }
 
 1;

@@ -5,75 +5,11 @@ use warnings;
 
 use Test::More tests => 54;
 
+use lib 't/lib';
+use Utils qw/is_between compare_hash_by_ranges/;
+
 use Benchmark;
 use Statistics::Descriptive;
-
-sub compare_hash_by_ranges
-{
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-    
-    my $got_hash_ref = shift;
-    my $expected = shift;
-    my $blurb = shift;
-
-    my $got = 
-        [
-            map { [$_, $got_hash_ref->{$_} ] }
-            sort { $a <=> $b }
-            keys(%$got_hash_ref)
-        ]
-        ;
-
-    my $success = 1;
-
-    if (scalar(@$expected) != scalar(@$got))
-    {
-        $success = 0;
-        diag("Number of keys differ in hashes.");
-    }
-    else
-    {
-        COMPARE_KEYS:
-        for my $idx (0 .. $#$got)
-        {
-            my ($got_key, $got_val) = @{$got->[$idx]};
-            my ($expected_bottom, $expected_top, $expected_val)
-                = @{$expected->[$idx]};
-            
-            if (! (    ($got_key >= $expected_bottom)
-                    && ($got_key <= $expected_top)
-                    && ($got_val == $expected_val)
-                )
-            )
-            {
-                $success = 0;
-                diag(<<"EOF");
-Key/Val pair No. $idx is out of range or wrong:
-Got: [$got_key, $got_val]
-Expected: [$expected_bottom, $expected_top, $expected_val]
-EOF
-                
-                last COMPARE_KEYS;
-            }
-        }
-    }
-
-    ok($success, $blurb);
-}
-
-sub is_between
-{
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-    
-    my ($have, $want_bottom, $want_top, $blurb) = @_;
-
-    ok (
-        (($have >= $want_bottom) &&
-        ($want_top >= $have)),
-        $blurb
-    );
-}
-
 
 {
     # test #1
