@@ -1,5 +1,9 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+    - Correct a misspelling of "weight" in
+    lib/Statistics/Descriptive/Smoother/Weightedexponential.pm
+        - Thanks to Wilhelm for the report.
+
 3.0603      May 15, 2012
     - Use in_between to compare decimal numbers
         - Smoothing tests were failing because of rounding problems

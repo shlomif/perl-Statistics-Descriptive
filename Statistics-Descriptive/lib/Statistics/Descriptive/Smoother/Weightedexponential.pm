@@ -76,13 +76,14 @@ __END__
 
 =head1 NAME
 
-Statistics::Descriptive::Smoother::Weigthedexponential - Implement weigthed exponential smoothing
+Statistics::Descriptive::Smoother::Weigthedexponential - Implement weighted
+exponential smoothing
 
 =head1 SYNOPSIS
 
   use Statistics::Descriptive::Smoother;
   my $smoother = Statistics::Descriptive::Smoother->instantiate({
-           method   => 'weigthedexponential',
+           method   => 'weightedexponential',
            coeff    => 0.5,
            data     => [1, 2, 3, 4, 5],
            samples  => [110, 120, 130, 140, 150],
@@ -91,10 +92,11 @@ Statistics::Descriptive::Smoother::Weigthedexponential - Implement weigthed expo
 
 =head1 DESCRIPTION
 
-This module implement the weigthed exponential smoothing algorithm to smooth the trend of a series of statistical data.
+This module implement the weighted exponential smoothing algorithm to smooth
+the trend of a series of statistical data.
 
-This algorithm can help to control large swings in the unsmoothed data that arise from small samples for
-those data points.
+This algorithm can help to control large swings in the unsmoothed data that
+arise from small samples for those data points.
 
 The algorithm implements the following formula:
 
