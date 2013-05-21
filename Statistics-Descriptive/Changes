@@ -2,6 +2,8 @@ Revision history for Perl extension Statistics::Descriptive.
 
 3.0605      2013-05-21
     - Add t/style-trailing-space.t .
+    - Add t/cpan-changes.t .
+        - Convert Changes to it.
 
 3.0604      2012-07-14
     - Correct a misspelling of "weight" in
