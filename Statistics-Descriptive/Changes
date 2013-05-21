@@ -1,5 +1,8 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0605      May 21, 2013
+    - Add t/style-trailing-space.t .
+
 3.0604      July 14, 2012
     - Correct a misspelling of "weight" in
     lib/Statistics/Descriptive/Smoother/Weightedexponential.pm
