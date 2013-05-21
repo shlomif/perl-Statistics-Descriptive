@@ -6,3 +6,7 @@ Statistics-Descriptive/MYMETA.json
 Statistics-Descriptive/Makefile.PL
 Statistics-Descriptive/_build
 Statistics-Descriptive/blib
+
+syntax: regexp
+
+^Statistics-Descriptive/Statistics-Descriptive-\d+\.\d+(?:/|\.tar\.gz$)
