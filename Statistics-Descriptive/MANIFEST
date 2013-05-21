@@ -16,6 +16,7 @@ scripts/tag-release.pl
 scripts/bump-version-number.pl
 t/lib/Utils.pm
 t/00-load.t
+t/cpan-changes.t
 t/descr.t
 t/descr_smooth_methods.t
 t/freq_distribution-1-rt-34999.t
