@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# This script analyses two distributions from tab-separated input 
+# This script analyses two distributions from tab-separated input
 # and outputs some basic statistcs.
 #
 # It was used to analyse the distribution of the number of moves in
@@ -13,9 +13,9 @@ use Statistics::Descriptive;
 
 my $num_fields = 2;
 
-my @stats = 
-    (map 
-        { Statistics::Descriptive::Full->new(); } 
+my @stats =
+    (map
+        { Statistics::Descriptive::Full->new(); }
         (1 .. $num_fields)
     );
 

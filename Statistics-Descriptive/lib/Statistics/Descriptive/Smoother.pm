@@ -14,7 +14,7 @@ sub instantiate {
     my $coeff      = delete $args->{coeff} || 0;
     my $ra_samples = delete $args->{samples};
     my $ra_data    = delete $args->{data};
- 
+
     if ($coeff < 0 || $coeff > 1) {
         carp("Invalid smoothing coefficient C $coeff\n");
         return;
@@ -40,7 +40,7 @@ sub get_smoothing_coeff { $_[0]->{coeff} }
 
 sub set_smoothing_coeff {
     my ($self, $coeff) = @_;
-    
+
     if ($coeff < 0 || $coeff > 1) {
         carp("Invalid smoothing coefficient C $coeff\n");
         return;
@@ -110,7 +110,7 @@ Array ref with the data of the series. At least 2 values are needed to smooth th
 Array ref with the samples each data value has been built with. This is an optional parameter since it is not used by all the
 smoothing algorithm.
 
-=back 
+=back
 
 =item $smoother->get_smoothing_coeff();
 
@@ -120,7 +120,7 @@ Returns the smoothing coefficient.
 
 Set the smoothing coefficient value. It needs to be in the [0;1] range, otherwise undef will be reutrned.
 
-=back 
+=back
 
 =head1 AUTHOR
 

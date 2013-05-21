@@ -34,7 +34,7 @@ local $SIG{__WARN__} = sub { };
 
     # TEST
     isa_ok ($smoother, 'Statistics::Descriptive::Smoother::Weightedexponential', 'Weightedexponential class correctly created');
-    
+
 }
 
 {
@@ -78,7 +78,7 @@ local $SIG{__WARN__} = sub { };
 
     # TEST
     is ($smoother_pos, undef, 'Invalid coefficient: > 1');
- 
+
 }
 
 {

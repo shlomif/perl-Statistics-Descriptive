@@ -34,13 +34,13 @@ sub get_smoothed_data {
         my $Nt   = $self->{samples}->[$idx];
         my $St_1 = $smoothed_values[-1];
         my $Wt_1 = $Wts[-1];
-        
-        push @Wts, $self->_get_Wt($Wt_1, $Nt); 
+
+        push @Wts, $self->_get_Wt($Wt_1, $Nt);
 
         my $coeff_a = $self->_get_coeff_A($Wt_1, $Nt);
         my $coeff_b = $self->_get_coeff_B($Wt_1, $Nt);
-        
-        my $smoothed_value = ( $St_1 * $coeff_a + $Xt * $coeff_b ) / ( $coeff_a + $coeff_b ); 
+
+        my $smoothed_value = ( $St_1 * $coeff_a + $Xt * $coeff_b ) / ( $coeff_a + $coeff_b );
         push @smoothed_values, $smoothed_value;
     }
     return @smoothed_values;
@@ -48,15 +48,15 @@ sub get_smoothed_data {
 
 sub _get_Wt {
     my ($self, $Wt_1, $Nt) = @_;
-  
+
     my $C = $self->get_smoothing_coeff();
     my $coeff_a = $self->_get_coeff_A($Wt_1, $Nt);
     my $coeff_b = $self->_get_coeff_B($Wt_1, $Nt);;
- 
+
     return (($Wt_1 * $coeff_a + $Nt * $coeff_b)/($coeff_a + $coeff_b));
 }
 
-sub _get_coeff_A { 
+sub _get_coeff_A {
     my ($self, $Wt_1, $Nt) = @_;
 
     my $C = $self->get_smoothing_coeff();

@@ -285,7 +285,7 @@ use Statistics::Descriptive;
 {
     my $stat = Statistics::Descriptive::Full->new();
     my $expected;
-    
+
     $stat->add_data(1 .. 9, 100);
 
     # TEST
@@ -303,11 +303,11 @@ use Statistics::Descriptive;
         $expected + 1E-13,
         "Kurtosis of $expected +/- 1E-13"
     );
-    
+
     $stat->add_data(100 .. 110);
-    
+
     #  now check that cached skew and kurt values are recalculated
-    
+
     # TEST
     $expected = -0.306705104889384;
     is_between ($stat->skewness(),
@@ -376,14 +376,14 @@ use Statistics::Descriptive;
         skewness kurtosis median
         harmonic_mean geometric_mean
         mode least_squares_fit
-        percentile frequency_distribution 
+        percentile frequency_distribution
     };
     #  least_squares_fit is handled in an earlier test, so is actually a duplicate here
-    
+
     #diag 'Results are undef when no data added';
     #  need to update next line when new methods are tested here
     # TEST:$method_count=18
-    foreach my $method (sort @methods) {  
+    foreach my $method (sort @methods) {
         $result = $stat->$method;
         # TEST*$method_count
         ok (!defined ($result), "$method is undef when object has no data.");
@@ -394,11 +394,11 @@ use Statistics::Descriptive;
     $result = $stat->$method(1);
     # TEST
     ok (!defined ($result), "$method is undef when object has no data.");
-    
+
     $method = 'trimmed_mean';
     $result = $stat->$method(0.1);
     # TEST
-    ok (!defined ($result), "$method is undef when object has no data.");    
+    ok (!defined ($result), "$method is undef when object has no data.");
 }
 
 #  test SD when only one value added

@@ -129,7 +129,7 @@ sub add_data {
   return 1 if (!@{ $aref });
 
   ##Take care of appending to an existing data set
-  
+
   if (!defined($min = $self->min()))
   {
       $min = $aref->[$mindex = 0];
@@ -193,7 +193,7 @@ sub variance {
   my $self = shift;  ##Myself
 
   return undef if (!$self->count());
-  
+
   my $div = @_ ? 0 : 1;
   my $count = $self->count();
   if ($count < 1 + $div) {
@@ -287,7 +287,7 @@ sub new {
   my $proto = shift;
   my $class = ref($proto) || $proto;
   # Create my self re SUPER
-  my $self = $class->SUPER::new();  
+  my $self = $class->SUPER::new();
   bless ($self, $class);  #Re-anneal the object
   $self->_clear_fields();
   return $self;
@@ -495,7 +495,7 @@ sub _calc_new_median
 
     ##Even or odd
     if ($count % 2)
-    {   
+    {
         return $self->_data->[($count-1)/2];
     }
     else
@@ -510,8 +510,8 @@ sub _calc_new_median
 sub median {
     my $self = shift;
 
-    return undef if !$self->count;    
-    
+    return undef if !$self->count;
+
     ##Cached?
     if (! defined($self->_median()))
     {
@@ -528,10 +528,10 @@ sub quantile {
        carp("Bad quartile type, must be 0, 1, 2, 3 or 4\n");
        return;
     }
-    
+
     #  check data count after the args are checked - should help debugging
-    return undef if !$self->count;  
-    
+    return undef if !$self->count;
+
     $self->sort_data();
 
     return $self->_data->[0] if ( $QuantileNumber == 0 );
@@ -548,7 +548,7 @@ sub quantile {
     my $aK_quantile     = $self->_data->[ $K_quantile - 1 ];
     return $aK_quantile if ( $F_quantile == 0 );
     my $aKPlus_quantile = $self->_data->[$K_quantile];
-    
+
     # Calcul quantile
     my $quantile = $aK_quantile
       + ( $F_quantile * ( $aKPlus_quantile - $aK_quantile ) );
@@ -562,8 +562,8 @@ sub _real_calc_trimmed_mean
     my $lower = shift;
     my $upper = shift;
 
-    my $lower_trim = int ($self->count()*$lower); 
-    my $upper_trim = int ($self->count()*$upper); 
+    my $lower_trim = int ($self->count()*$lower);
+    my $upper_trim = int ($self->count()*$upper);
     my ($val,$oldmean) = (0,0);
     my ($tm_count,$tm_mean,$index) = (0,0,$lower_trim);
 
@@ -595,7 +595,7 @@ sub trimmed_mean
     }
 
     #  check data count after the args
-    return undef if !$self->count;    
+    return undef if !$self->count;
 
     ##Cache
     my $thistm = join ':',$lower,$upper;
@@ -688,7 +688,7 @@ sub mode
 
 sub geometric_mean {
     my $self = shift;
-    
+
     return undef if !$self->count;
 
     if (!defined($self->_geometric_mean()))
@@ -718,23 +718,23 @@ sub skewness {
     {
         my $n    = $self->count();
         my $sd   = $self->standard_deviation();
-        
+
         my $skew;
-        
+
         #  skip if insufficient records
         if ( $sd && $n > 2) {
-            
+
             my $mean = $self->mean();
-            
+
             my $sum_pow3;
-            
+
             foreach my $rec ( $self->get_data ) {
                 my $value  = (($rec - $mean) / $sd);
                 $sum_pow3 +=  $value ** 3;
             }
-            
+
             my $correction = $n / ( ($n-1) * ($n-2) );
-            
+
             $skew = $correction * $sum_pow3;
         }
 
@@ -750,25 +750,25 @@ sub kurtosis {
     if (!defined($self->_kurtosis()))
     {
         my $kurt;
-        
+
         my $n  = $self->count();
         my $sd   = $self->standard_deviation();
-        
+
         if ( $sd && $n > 3) {
 
             my $mean = $self->mean();
-            
+
             my $sum_pow4;
             foreach my $rec ( $self->get_data ) {
                 $sum_pow4 += ( ($rec - $mean ) / $sd ) ** 4;
             }
-            
+
             my $correction1 = ( $n * ($n+1) ) / ( ($n-1) * ($n-2) * ($n-3) );
             my $correction2 = ( 3  * ($n-1) ** 2) / ( ($n-2) * ($n-3) );
-            
+
             $kurt = ( $correction1 * $sum_pow4 ) - $correction2;
         }
-        
+
         $self->_kurtosis($kurt);
     }
 
@@ -914,7 +914,7 @@ sub least_squares_fit {
   }
 
   $rms = sqrt($rms / $count);
-  
+
   $self->_least_squares_fit([$q, $m, $r, $rms]);
 
   return @{ $self->_least_squares_fit() };
@@ -982,7 +982,7 @@ except more efficient.
 
 =item $stat->add_data(1,2,3);
 
-Adds data to the statistics variable. The cached statistical values are 
+Adds data to the statistics variable. The cached statistical values are
 updated automatically.
 
 =item $stat->count();
@@ -1045,7 +1045,7 @@ described above.
 
 Adds data to the statistics variable.  All of the sparse statistical
 values are updated and cached.  Cached values from Full methods are
-deleted since they are no longer valid.  
+deleted since they are no longer valid.
 
 I<Note:  Calling add_data with an empty array will delete all of your
 Full method cached values!  Cached values for the sparse methods are
@@ -1108,7 +1108,7 @@ Example #2: Valid code reference
 
     my $stat = Statistics::Descriptive::Full->new();
     $stat->add_data( 1, 1, 1, 100, 1, );
-  
+
     print $stat->set_outlier_filter( \&outlier_filter ); # => 1
     my @filtered_data = $stat->get_data_without_outliers();
     # @filtered_data is (1, 1, 1, 1)
@@ -1154,9 +1154,9 @@ the flag.
 
 =item $stat->skewness();
 
-Returns the skewness of the data. 
+Returns the skewness of the data.
 A value of zero is no skew, negative is a left skewed tail,
-positive is a right skewed tail. 
+positive is a right skewed tail.
 This is consistent with Excel.
 
 =item $stat->kurtosis();
@@ -1221,7 +1221,7 @@ also return the index of the percentile.
 
 =item $x = $stat->quantile($Type);
 
-Sorts the data and returns estimates of underlying distribution quantiles based on one 
+Sorts the data and returns estimates of underlying distribution quantiles based on one
 or two order statistics from the supplied elements.
 
 This method use the same algorithm as Excel and R language (quantile B<type 7>).
@@ -1236,7 +1236,7 @@ B<$Type> is an integer value between 0 to 4 :
   3 => third quartile (Q3) : upper quartile = highest cut off (25%) of data, or lowest 75% = 75th percentile
   4 => fourth quartile (Q4) : maximal value
 
-Exemple : 
+Exemple :
 
   my @data = (1..10);
   my $stat = Statistics::Descriptive::Full->new();
@@ -1266,12 +1266,12 @@ Returns the geometric mean of the data.
 
 Returns the mode of the data. The mode is the most commonly occuring datum.
 See L<http://en.wikipedia.org/wiki/Mode_%28statistics%29> . If all values
-occur only once, then mode() will return undef. 
+occur only once, then mode() will return undef.
 
 =item $stat->trimmed_mean(ltrim[,utrim]);
 
-C<trimmed_mean(ltrim)> returns the mean with a fraction C<ltrim> 
-of entries at each end dropped. C<trimmed_mean(ltrim,utrim)> 
+C<trimmed_mean(ltrim)> returns the mean with a fraction C<ltrim>
+of entries at each end dropped. C<trimmed_mean(ltrim,utrim)>
 returns the mean after a fraction C<ltrim> has been removed from the
 lower end of the data and a fraction C<utrim> has been removed from the
 upper end of the data.  This method sorts the data before beginning

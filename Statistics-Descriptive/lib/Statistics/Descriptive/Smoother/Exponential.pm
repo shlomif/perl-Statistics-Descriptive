@@ -3,14 +3,14 @@ use strict;
 use warnings;
 
 use base 'Statistics::Descriptive::Smoother';
-    
+
 our $VERSION = '3.0604';
-    
+
 sub _new {
     my ($class, $args) = @_;
-        
+
     return bless $args || {}, $class;
-}   
+}
 
 # The name of the variables used in the code refers to the explanation in the pod
 sub get_smoothed_data {

@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
- 
+
 use Test::More tests => 2;
 
 use Statistics::Descriptive;
@@ -20,7 +20,7 @@ my @data=(
 my $stat = Statistics::Descriptive::Full->new();
 $stat->add_data(@data);
 # I should get 20 partitions, shouldn't I?
-my %freqs=$stat->frequency_distribution (20); 
+my %freqs=$stat->frequency_distribution (20);
 
 # TEST
 is (scalar(keys(%freqs)),

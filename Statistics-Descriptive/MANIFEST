@@ -27,4 +27,5 @@ t/quantile.t
 t/smoother.t
 t/smoother_exponential.t
 t/smoother_weightedexponential.t
+t/style-trailing-space.t
 META.json
