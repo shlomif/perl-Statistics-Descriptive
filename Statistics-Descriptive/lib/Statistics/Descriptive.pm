@@ -261,7 +261,7 @@ use vars qw(@ISA $a $b %fields);
 __PACKAGE__->_make_private_accessors(
     [qw(data samples frequency geometric_mean harmonic_mean
         least_squares_fit median mode
-        skewness kurtosis
+        skewness kurtosis median_absolute_deviation
        )
     ]
 );
@@ -922,9 +922,15 @@ sub least_squares_fit {
 
 sub median_absolute_deviation {
     my ($self) = @_;
-    my $stat = $self->new;
-    $stat->add_data(map { abs($_ - $self->median) } $self->get_data);
-    return $stat->median;
+
+    if (!defined($self->_median_absolute_deviation()))
+    {
+        my $stat = $self->new;
+        $stat->add_data(map { abs($_ - $self->median) } $self->get_data);
+        $self->_median_absolute_deviation($stat->median);
+    }
+
+    return $self->_median_absolute_deviation();
 }
 
 
