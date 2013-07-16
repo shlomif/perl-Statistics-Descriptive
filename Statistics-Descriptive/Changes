@@ -1,5 +1,9 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+    - Implement the median_absolute_deviation method.
+        - https://bitbucket.org/shlomif/perl-statistics-descriptive/pull-request/5/median-absolute-deviation-method/diff
+        - Thanks to Kang-min Liu.
+
 3.0605      2013-05-21
     - Add t/style-trailing-space.t .
     - Add t/cpan-changes.t .
