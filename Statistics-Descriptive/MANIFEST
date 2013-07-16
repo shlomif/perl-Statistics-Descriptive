@@ -20,6 +20,7 @@ t/cpan-changes.t
 t/descr.t
 t/descr_smooth_methods.t
 t/freq_distribution-1-rt-34999.t
+t/median_absolute_deviation.t
 t/mode.t
 t/outliers.t
 t/pod-coverage.t

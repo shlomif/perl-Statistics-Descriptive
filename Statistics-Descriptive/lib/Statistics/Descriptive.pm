@@ -920,6 +920,14 @@ sub least_squares_fit {
   return @{ $self->_least_squares_fit() };
 }
 
+sub median_absolute_deviation {
+    my ($self) = @_;
+    my $stat = $self->new;
+    $stat->add_data(map { abs($_ - $self->median) } $self->get_data);
+    return $stat->median;
+}
+
+
 1;
 
 package Statistics::Descriptive;
