@@ -191,35 +191,34 @@ sub standard_deviation {
 
 ##Return variance; if needed, compute and cache it.
 sub variance {
-  my $self = shift;  ##Myself
+    my $self = shift;  ##Myself
+  
+    my $count = $self->count();
+  
+    return undef if !$count;
+  
+    return 0 if $count == 1;
 
-  return undef if (!$self->count());
+    if (!defined($self->_variance())) {
+        my $variance = ($self->sumsq()- $count * $self->mean()**2);
 
-  my $div = @_ ? 0 : 1;
-  my $count = $self->count();
-  if ($count < 1 + $div) {
-      return 0;
-  }
+        # Sometimes due to rounding errors we get a number below 0.
+        # This makes sure this is handled as gracefully as possible.
+        #
+        # See:
+        #
+        # https://rt.cpan.org/Public/Bug/Display.html?id=46026
 
-  if (!defined($self->_variance())) {
-    my $variance = ($self->sumsq()- $count * $self->mean()**2);
+        $variance = $variance < 0 ? 0 : $variance / ($count - 1);
 
-    # Sometimes due to rounding errors we get a number below 0.
-    # This makes sure this is handled as gracefully as possible.
-    #
-    # See:
-    #
-    # https://rt.cpan.org/Public/Bug/Display.html?id=46026
-    if ($variance < 0)
-    {
-        $variance = 0;
+        $self->_variance($variance);
+
+        #  Return now to avoid re-entering this sub
+	#  (and therefore save time when many objects are used).
+        return $variance;  
     }
 
-    $variance /= $count - $div;
-
-    $self->_variance($variance);
-  }
-  return $self->_variance();
+    return $self->_variance();
 }
 
 ##Clear a stat.  More efficient than destroying an object and calling
@@ -229,7 +228,7 @@ sub clear {
   my $key;
 
   return if (!$self->count());
-  while (my($field, $value) = each %fields) {
+  while (my($field, $value) = each %fields) {  #  could use a slice assignment here
     $self->{$field} = $value;
   }
 }
