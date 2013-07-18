@@ -113,73 +113,73 @@ sub _is_permitted
 }
 
 sub add_data {
-  my $self = shift;  ##Myself
-  my $oldmean;
-  my ($min,$mindex,$max,$maxdex,$sum,$sumsq,$count);
-  my $aref;
-
-  if (ref $_[0] eq 'ARRAY') {
-    $aref = $_[0];
-  }
-  else {
-    $aref = \@_;
-  }
-
-  ##If we were given no data, we do nothing.
-  return 1 if (!@{ $aref });
-
-  ##Take care of appending to an existing data set
-
-  if (!defined($min = $self->min()))
-  {
-      $min = $aref->[$mindex = 0];
-  }
-  else
-  {
-      $mindex = $self->mindex();
-  }
-
-  if (!defined($max = $self->max()))
-  {
-      $max = $aref->[$maxdex = 0];
-  }
-  else
-  {
-      $maxdex = $self->maxdex();
-  }
-
-  $sum = $self->sum();
-  $sumsq = $self->sumsq();
-  $count = $self->count();
-
-  ##Calculate new mean, sumsq, min and max;
-  foreach ( @{ $aref } ) {
-    $sum += $_;
-    $sumsq += $_**2;
-    $count++;
-    if ($_ >= $max) {
-      $max = $_;
-      $maxdex = $count-1;
+    my $self = shift;  ##Myself
+    my $oldmean;
+    my ($min,$mindex,$max,$maxdex,$sum,$sumsq,$count);
+    my $aref;
+  
+    if (ref $_[0] eq 'ARRAY') {
+	$aref = $_[0];
     }
-    if ($_ <= $min) {
-      $min = $_;
-      $mindex = $count-1;
+    else {
+	$aref = \@_;
     }
-  }
+  
+    ##If we were given no data, we do nothing.
+    return 1 if (!@{ $aref });
+  
+    ##Take care of appending to an existing data set
+  
+    if (!defined($min = $self->min()))
+    {
+	$min = $aref->[$mindex = 0];
+    }
+    else
+    {
+	$mindex = $self->mindex();
+    }
+  
+    if (!defined($max = $self->max()))
+    {
+	$max = $aref->[$maxdex = 0];
+    }
+    else
+    {
+	$maxdex = $self->maxdex();
+    }
+  
+    $sum   = $self->sum();
+    $sumsq = $self->sumsq();
+    $count = $self->count();
 
-  $self->min($min);
-  $self->mindex($mindex);
-  $self->max($max);
-  $self->maxdex($maxdex);
-  $self->sample_range($max - $min);
-  $self->sum($sum);
-  $self->sumsq($sumsq);
-  $self->mean($sum / $count);
-  $self->count($count);
-  ##indicator the value is not cached.  Variance isn't commonly enough
-  ##used to recompute every single data add.
-  $self->_variance(undef);
-  return 1;
+    ##Calculate new mean, sumsq, min and max;
+    foreach ( @{ $aref } ) {
+	$sum += $_;
+	$sumsq += $_**2;
+	$count++;
+	if ($_ >= $max) {
+	    $max = $_;
+	    $maxdex = $count-1;
+	}
+	if ($_ <= $min) {
+	    $min = $_;
+	    $mindex = $count-1;
+	}
+    }
+
+    $self->min($min);
+    $self->mindex($mindex);
+    $self->max($max);
+    $self->maxdex($maxdex);
+    $self->sample_range($max - $min);
+    $self->sum($sum);
+    $self->sumsq($sumsq);
+    $self->mean($sum / $count);
+    $self->count($count);
+    ##indicator the value is not cached.  Variance isn't commonly enough
+    ##used to recompute every single data add.
+    $self->_variance(undef);
+    return 1;
 }
 
 sub standard_deviation {
