@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 59;
+use Test::More tests => 61;
 
 use lib 't/lib';
 use Utils qw/is_between compare_hash_by_ranges/;
@@ -475,6 +475,13 @@ use Statistics::Descriptive;
     $stat1->add_data(@data2);     #  add new data
     is ($stat1->mindex, $e_mindex, "mindex is correct after new data added");
     is ($stat1->maxdex, $e_maxdex, "maxdex is correct after new data added");
+
+    # TEST*2
+    $stat1->median;  #  trigger a sort
+    $e_maxdex = scalar @data1 + scalar @data2 - 1;
+    is ($stat1->mindex, 0, "mindex is correct after sorting");
+    is ($stat1->maxdex, $e_maxdex, "maxdex is correct after sorting");
+    
 }
 
 
