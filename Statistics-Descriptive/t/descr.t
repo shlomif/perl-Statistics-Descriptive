@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 55;
+use Test::More tests => 59;
 
 use lib 't/lib';
 use Utils qw/is_between compare_hash_by_ranges/;
@@ -453,6 +453,31 @@ use Statistics::Descriptive;
 
 }
 
+#  Tests for mindex and maxdex on unsorted data,
+#  including when new data are added which should not change the values
+{
+    my $stats_class = 'Statistics::Descriptive::Full';
+    my $stat1 = $stats_class->new();
+
+    my @data1 = (20, 1 .. 3, 100, 1..5);
+    my @data2 = (25, 30);
+
+    my $e_maxdex = 4;
+    my $e_mindex = 1;
+
+    $stat1->add_data(@data1);     # initialise
+    
+    # TEST*2
+    is ($stat1->mindex, $e_mindex, "initial mindex is correct");
+    is ($stat1->maxdex, $e_maxdex, "initial maxdex is correct");
+
+    # TEST*2
+    $stat1->add_data(@data2);     #  add new data
+    is ($stat1->mindex, $e_mindex, "mindex is correct after new data added");
+    is ($stat1->maxdex, $e_maxdex, "maxdex is correct after new data added");
+}
+
+
 #  what happens when we add new data?
 #  Recycle the same data so mean, sd etc remain the same
 {
@@ -480,7 +505,7 @@ use Statistics::Descriptive;
         $stat2->$meth;
     }
 
-    #TEST
+    # TEST
     is_deeply (
         $stat1,
         $stat2,
