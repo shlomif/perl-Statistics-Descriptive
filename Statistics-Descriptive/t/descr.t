@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 54;
+use Test::More tests => 55;
 
 use lib 't/lib';
 use Utils qw/is_between compare_hash_by_ranges/;
@@ -451,4 +451,40 @@ use Statistics::Descriptive;
         'add_data_with_samples: samples are correct',
     );
 
+}
+
+#  what happens when we add new data?
+#  Recycle the same data so mean, sd etc remain the same
+{
+    my $stats_class = 'Statistics::Descriptive::Full';
+    my $stat1 = $stats_class->new();
+    my $stat2 = $stats_class->new();
+
+    my @data1 = (1 .. 9, 100);
+    my @data2 = (100 .. 110);
+
+    #  sample of methods
+    my @methods = qw /mean standard_deviation count skewness kurtosis median/;
+
+    $stat1->add_data(@data1);     # initialise
+    foreach my $meth (@methods) { #  run some methods
+        $stat1->$meth;
+    }
+    $stat1->add_data(@data2);     #  add new data
+    foreach my $meth (@methods) { #  re-run some methods
+        $stat1->$meth;
+    }
+
+    $stat2->add_data(@data1, @data2);  #  initialise with all data
+    foreach my $meth (@methods) { #  run some methods
+        $stat2->$meth;
+    }
+
+    #TEST
+    is_deeply (
+        $stat1,
+        $stat2,
+        'stats consistent after adding new data',
+    );
+    
 }
