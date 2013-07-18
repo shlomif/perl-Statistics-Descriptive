@@ -393,8 +393,7 @@ sub add_data {
 
     ##Variance isn't commonly enough
     ##used to recompute every single data add, so just clear its cache.
-    #$self->_variance(undef);
-    $self->{variance} = undef;  #  Dirty approach, as above
+    $self->_variance(undef);
     
     push @{ $self->_data() }, @{ $aref };
 
