@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 54;
+use Test::More tests => 61;
 
 use lib 't/lib';
 use Utils qw/is_between compare_hash_by_ranges/;
@@ -449,6 +449,74 @@ use Statistics::Descriptive;
         $stats->_samples(),
         [ 10, 20, 30, 40, 50 ],
         'add_data_with_samples: samples are correct',
+    );
+
+}
+
+#  Tests for mindex and maxdex on unsorted data,
+#  including when new data are added which should not change the values
+{
+    my $stats_class = 'Statistics::Descriptive::Full';
+    my $stat1 = $stats_class->new();
+
+    my @data1 = (20, 1 .. 3, 100, 1..5);
+    my @data2 = (25, 30);
+
+    my $e_maxdex = 4;
+    my $e_mindex = 1;
+
+    $stat1->add_data(@data1);     # initialise
+
+    # TEST*2
+    is ($stat1->mindex, $e_mindex, "initial mindex is correct");
+    is ($stat1->maxdex, $e_maxdex, "initial maxdex is correct");
+
+    # TEST*2
+    $stat1->add_data(@data2);     #  add new data
+    is ($stat1->mindex, $e_mindex, "mindex is correct after new data added");
+    is ($stat1->maxdex, $e_maxdex, "maxdex is correct after new data added");
+
+    # TEST*2
+    $stat1->median;  #  trigger a sort
+    $e_maxdex = scalar @data1 + scalar @data2 - 1;
+    is ($stat1->mindex, 0, "mindex is correct after sorting");
+    is ($stat1->maxdex, $e_maxdex, "maxdex is correct after sorting");
+
+}
+
+
+#  what happens when we add new data?
+#  Recycle the same data so mean, sd etc remain the same
+{
+    my $stats_class = 'Statistics::Descriptive::Full';
+    my $stat1 = $stats_class->new();
+    my $stat2 = $stats_class->new();
+
+    my @data1 = (1 .. 9, 100);
+    my @data2 = (100 .. 110);
+
+    #  sample of methods
+    my @methods = qw /mean standard_deviation count skewness kurtosis median/;
+
+    $stat1->add_data(@data1);     # initialise
+    foreach my $meth (@methods) { #  run some methods
+        $stat1->$meth;
+    }
+    $stat1->add_data(@data2);     #  add new data
+    foreach my $meth (@methods) { #  re-run some methods
+        $stat1->$meth;
+    }
+
+    $stat2->add_data(@data1, @data2);  #  initialise with all data
+    foreach my $meth (@methods) { #  run some methods
+        $stat2->$meth;
+    }
+
+    # TEST
+    is_deeply (
+        $stat1,
+        $stat2,
+        'stats consistent after adding new data',
     );
 
 }
