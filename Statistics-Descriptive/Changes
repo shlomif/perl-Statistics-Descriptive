@@ -4,6 +4,7 @@ Revision history for Perl extension Statistics::Descriptive.
         - https://bitbucket.org/shlomif/perl-statistics-descriptive/pull-request/5/median-absolute-deviation-method/diff
         - Thanks to Kang-min Liu.
     - Minimal version of perl set to 5.6.0 (CPANTS).
+    - Add standalone LICENSE file (CPANTS).
 
 3.0605      2013-05-21
     - Add t/style-trailing-space.t .
