@@ -5,9 +5,8 @@ use warnings;
 
 ##This module draws heavily from perltoot v0.4 from Tom Christiansen.
 
-require 5.00404;  ##Yes, this is underhanded, but makes support for me easier
-		  ##Not only that, but it's the latest "safe" version of
-		  ##Perl5.  01-03 weren't bug free.
+use 5.006;
+
 use vars (qw($VERSION $Tolerance $Min_samples_number));
 
 $VERSION = '3.0605';

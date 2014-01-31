@@ -21,6 +21,7 @@ my $builder = Test::Run::Builder->new(
     requires => {
         'Carp' => 0,
         'POSIX' => 0,
+        'perl' => '5.006',
         'strict' => 0,
         'vars' => 0,
         'warnings' => 0,
