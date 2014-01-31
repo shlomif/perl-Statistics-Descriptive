@@ -4,7 +4,7 @@ use warnings;
 
 use base 'Statistics::Descriptive::Smoother';
 
-our $VERSION = '3.0605';
+our $VERSION = '3.0606';
 
 sub _new {
     my ($class, $args) = @_;
