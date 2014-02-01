@@ -248,8 +248,8 @@ use vars qw(@ISA $a $b %fields);
 
 @ISA = qw(Statistics::Descriptive::Sparse);
 
-use List::MoreUtils;
-use List::Util;
+use List::MoreUtils ();
+use List::Util ();
 
 ##Create a list of fields not to remove when data is updated
 %fields = (

@@ -1,5 +1,10 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0607      2014-02-01
+    - Fix the List::MoreUtils prereqs.
+        - http://www.cpantesters.org/cpan/report/365b752c-8adf-11e3-bd14-e3bee4621ba3
+        - Thanks to Chris Williams (BINGOS) for the CPAN Testers Report.
+
 3.0606      2014-01-31
     - Implement the median_absolute_deviation method.
         - https://bitbucket.org/shlomif/perl-statistics-descriptive/pull-request/5/median-absolute-deviation-method/diff
