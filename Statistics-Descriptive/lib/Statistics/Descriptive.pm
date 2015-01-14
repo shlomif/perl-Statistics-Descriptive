@@ -823,11 +823,10 @@ sub skewness {
             my $mean = $self->mean();
 
             my $sum_pow3;
-
             foreach my $rec ( $self->get_data ) {
-                my $value  = (($rec - $mean) / $sd);
-                $sum_pow3 +=  $value ** 3;
+                $sum_pow3 += (($rec - $mean) / $sd) ** 3;
             }
+
 
             my $correction = $n / ( ($n-1) * ($n-2) );
 
@@ -848,7 +847,7 @@ sub kurtosis {
         my $kurt;
 
         my $n  = $self->count();
-        my $sd   = $self->standard_deviation();
+        my $sd = $self->standard_deviation();
 
         if ( $sd && $n > 3) {
 
