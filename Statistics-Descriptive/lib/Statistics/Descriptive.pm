@@ -1517,7 +1517,7 @@ Previously:
 Colin Kuskie
 
 My email address can be found at http://www.perl.com under Who's Who
-or at: http://search.cpan.org/author/COLINK/.
+or at: https://metacpan.org/author/COLINK .
 
 =head1 CONTRIBUTORS
 
