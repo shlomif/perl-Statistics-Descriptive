@@ -36,7 +36,7 @@ my $builder = Test::Run::Builder->new(
         resources =>
         {
             repository => "https://bitbucket.org/shlomif/perl-statistics-descriptive",
-            homepage => "http://web-cpan.berlios.de/modules/Statistics-Descriptive/",
+            homepage => "http://web-cpan.shlomifish.org/modules/Statistics-Descriptive/",
         },
         keywords =>
         [
