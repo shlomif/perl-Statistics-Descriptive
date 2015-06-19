@@ -1,5 +1,8 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0609      2015-06-19
+    - Update some old URLs and addresses.
+
 3.0608      2015-01-14
     - Apply patch to speed up skewness calculations.
         - https://rt.cpan.org/Public/Bug/Display.html?id=101422
