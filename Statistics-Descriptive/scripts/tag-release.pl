@@ -16,8 +16,6 @@ if (!defined ($version))
     die "Version is undefined!";
 }
 
-my $mini_repos_base = 'https://svn.berlios.de/svnroot/repos/web-cpan/Statistics-Descriptive';
-
 my @cmd = (
     "hg", "tag", "-m",
     "Tagging the Statistics-Descriptive release as $version",
