@@ -4,6 +4,7 @@ Revision history for Perl extension Statistics::Descriptive.
     - Clarified the docs for add_data_with_samples().
         - Some people thought they were repeat counts of the data , but they
         are normally ignored.
+    - Replace remaining tabs with spaces.
 
 3.0609      2015-06-19
     - Update some old URLs and addresses.
