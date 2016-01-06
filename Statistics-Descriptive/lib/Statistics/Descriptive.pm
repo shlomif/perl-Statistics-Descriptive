@@ -1162,9 +1162,20 @@ not changed>
 
 =item $stat->add_data_with_samples([{1 => 10}, {2 => 20}, {3 => 30},]);
 
-Add data to the statistics variable and set the number of samples each value has been
-built with. The data is the key of each element of the input array ref, while
-the value is the number of samples: [{data1 => smaples1}, {data2 => samples2}, ...]
+Add data to the statistics variable and set the number of samples each value
+has been built with. The data is the key of each element of the input array
+ref, while the value is the number of samples: [{data1 => smaples1}, {data2 =>
+samples2}, ...].
+
+B<NOTE:> The number of samples is only used by the smoothing function and is
+ignored otherwise. It is not equivalent to repeat count. In order to repeat
+a certain datum more than one time call add_data() like this:
+
+    my $value = 5;
+    my $repeat_count = 10;
+    $stat->add_data(
+        [ ($value) x $repeat_count ]
+    );
 
 =item $stat->get_data();
 
