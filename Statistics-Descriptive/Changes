@@ -180,45 +180,45 @@ Revision history for Perl extension Statistics::Descriptive.
 
 2.6         2002-10-10
     - Fixed caching in trimmed mean and modified code to allow trimming
-	  0% from upper bound.  Formerly if 0 was requested then it used the
-	  lower bound!
+      0% from upper bound.  Formerly if 0 was requested then it used the
+      lower bound!
 
-	- POD format patch from ddunlap
+    - POD format patch from ddunlap
 
 2.5         1999-05-12
-	- Forgot to document change in v2.4, which included fixing
-	  percentile so that it worked right and added to the test
-	  harness.
-	- Modified frequency_distribution so that specific bins could
-	  be passed in.  Fixed caching so that it actually works
-	  (it only used to get stuck returning the result of the
-	  first call).
-	- Turned off caching for least_squares_fit because there's no
-	  way to generate a unique key for memorization.
+    - Forgot to document change in v2.4, which included fixing
+      percentile so that it worked right and added to the test
+      harness.
+    - Modified frequency_distribution so that specific bins could
+      be passed in.  Fixed caching so that it actually works
+      (it only used to get stuck returning the result of the
+      first call).
+    - Turned off caching for least_squares_fit because there's no
+      way to generate a unique key for memorization.
 
 2.3         1998-11-12
-	- Fix for frequency distribution.
-	  Changed Makefile.PL to ease ActiveState distribution of the module.
-	  Andrea's code for preventing division by zero and other
-	  improvements.  He also wrote a great test bench.
-	  Added code from Warren Matthews to calculate percentile.
+    - Fix for frequency distribution.
+      Changed Makefile.PL to ease ActiveState distribution of the module.
+      Andrea's code for preventing division by zero and other
+      improvements.  He also wrote a great test bench.
+      Added code from Warren Matthews to calculate percentile.
 
 2.2         1998-02-23
-	- Multiple bug fixes:
-	  Fixed min/max bug with '0' vs defined.
-	  Provided fix for bug with AUTOLOAD/DESTROY/Carp problem.
+    - Multiple bug fixes:
+      Fixed min/max bug with '0' vs defined.
+      Provided fix for bug with AUTOLOAD/DESTROY/Carp problem.
 
 2.1         1997-09-02
-	- Multiple bug fixes:
-	  Cleaned up syntax error with my scoping.
-	  Fixed errors in least_squares_fit and median methods
+    - Multiple bug fixes:
+      Cleaned up syntax error with my scoping.
+      Fixed errors in least_squares_fit and median methods
 
 2.00        1997-08-20
-	- new version; created by h2xs 1.16
-	- Complete rewrite of OO interface by Colin Kuskie.
-	- Now has 2 classes instead of 1.5, a base class without data
-	  storage and a class that inherits the base methods and
-	  extends them with data storage and more statistics.
+    - new version; created by h2xs 1.16
+    - Complete rewrite of OO interface by Colin Kuskie.
+    - Now has 2 classes instead of 1.5, a base class without data
+      storage and a class that inherits the base methods and
+      extends them with data storage and more statistics.
 
 1.1         1995-04-01
         - Added LeastSquaresFit and FrequencyDistribution.
@@ -232,4 +232,4 @@ Revision history for Perl extension Statistics::Descriptive.
 
 0.10        1994-12-01
         - Initital concept, released to perl5-porters list.
-	- Jason Kastner <jkastner@tuba.aix.calpoly.edu>
+    - Jason Kastner <jkastner@tuba.aix.calpoly.edu>

@@ -20,7 +20,7 @@ sub ACTION_runtest
 
     # Make sure we test the module in blib/
     unshift @INC, (File::Spec->catdir($p->{base_dir}, $self->blib, 'lib'),
-		 File::Spec->catdir($p->{base_dir}, $self->blib, 'arch'));
+        File::Spec->catdir($p->{base_dir}, $self->blib, 'arch'));
 
     $self->do_test_run_tests;
 }
@@ -66,9 +66,9 @@ sub ACTION_tags
     return
         system(qw(
             ctags -f tags --recurse --totals
-    		--exclude=blib/ --exclude=t/lib
-    		--exclude=.svn --exclude='*~'
-    		--languages=Perl --langmap=Perl:+.t
+            --exclude=blib/ --exclude=t/lib
+            --exclude=.svn --exclude='*~'
+            --languages=Perl --langmap=Perl:+.t
     ));
 }
 

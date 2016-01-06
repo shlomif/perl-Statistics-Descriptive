@@ -76,15 +76,15 @@ sub _make_private_accessors
 
 ##Define the fields to be used as methods
 %fields = (
-  count			=> 0,
-  mean			=> undef,
-  sum			=> undef,
-  sumsq			=> undef,
-  min			=> undef,
-  max			=> undef,
-  mindex		=> undef,
-  maxdex		=> undef,
-  sample_range		=> undef,
+  count                 => 0,
+  mean                  => undef,
+  sum                   => undef,
+  sumsq                 => undef,
+  min                   => undef,
+  max                   => undef,
+  mindex                => undef,
+  maxdex                => undef,
+  sample_range          => undef,
   variance              => undef,
   );
 
@@ -118,10 +118,10 @@ sub add_data {
     my $aref;
 
     if (ref $_[0] eq 'ARRAY') {
-	$aref = $_[0];
+        $aref = $_[0];
     }
     else {
-	$aref = \@_;
+        $aref = \@_;
     }
 
     ##If we were given no data, we do nothing.
@@ -131,20 +131,20 @@ sub add_data {
 
     if (!defined($min = $self->min()))
     {
-	$min = $aref->[$mindex = 0];
+        $min = $aref->[$mindex = 0];
     }
     else
     {
-	$mindex = $self->mindex();
+        $mindex = $self->mindex();
     }
 
     if (!defined($max = $self->max()))
     {
-	$max = $aref->[$maxdex = 0];
+        $max = $aref->[$maxdex = 0];
     }
     else
     {
-	$maxdex = $self->maxdex();
+        $maxdex = $self->maxdex();
     }
 
     $sum   = $self->sum();
@@ -153,17 +153,17 @@ sub add_data {
 
     ##Calculate new mean, sumsq, min and max;
     foreach ( @{ $aref } ) {
-	$sum += $_;
-	$sumsq += $_**2;
-	$count++;
-	if ($_ >= $max) {
-	    $max = $_;
-	    $maxdex = $count-1;
-	}
-	if ($_ <= $min) {
-	    $min = $_;
-	    $mindex = $count-1;
-	}
+        $sum += $_;
+        $sumsq += $_**2;
+        $count++;
+        if ($_ >= $max) {
+            $max = $_;
+            $maxdex = $count-1;
+        }
+        if ($_ <= $min) {
+            $min = $_;
+            $mindex = $count-1;
+        }
     }
 
     $self->min($min);
@@ -213,7 +213,7 @@ sub variance {
         $self->_variance($variance);
 
         #  Return now to avoid re-entering this sub
-	#  (and therefore save time when many objects are used).
+        #  (and therefore save time when many objects are used).
         return $variance;
     }
 
