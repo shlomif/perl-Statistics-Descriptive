@@ -1204,7 +1204,8 @@ then the standard deviation will be high enough to make neither case an outlier.
 
 Set the function to filter out the outlier.
 
-C<$code_ref> is the reference to the subroutine implemeting the filtering function.
+C<$code_ref> is the reference to the subroutine implementing the filtering
+function.
 
 Returns C<undef> for invalid values of C<$code_ref> (i.e.: not defined or not a
 code reference), C<1> otherwise.
