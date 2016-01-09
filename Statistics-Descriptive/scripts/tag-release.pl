@@ -17,7 +17,7 @@ if (!defined ($version))
 }
 
 my @cmd = (
-    "hg", "tag", "-m",
+    "git", "tag", "-m",
     "Tagging the Statistics-Descriptive release as $version",
     "releases/$version",
 );

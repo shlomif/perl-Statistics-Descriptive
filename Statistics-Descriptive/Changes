@@ -1,5 +1,10 @@
 Revision history for Perl extension Statistics::Descriptive.
 
+3.0612      2016-01-09
+    - Move the VCS repository to GitHub.
+        - People are more used to it, and it can take part in the CPAN pull-req
+        challenge.
+
 3.0611      2016-01-07
     - Apply patch from Debian to correct a spelling error.
         - https://rt.cpan.org/Ticket/Display.html?id=110987
