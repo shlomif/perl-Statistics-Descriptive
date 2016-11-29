@@ -7,18 +7,14 @@ use warnings;
 
 use 5.006;
 
-use vars (qw($VERSION $Tolerance $Min_samples_number));
+use vars (qw($Tolerance $Min_samples_number));
 
-$VERSION = '3.0612';
+our $VERSION = '3.0612';
 
 $Tolerance = 0.0;
 $Min_samples_number = 4;
 
 package Statistics::Descriptive::Sparse;
-
-use vars qw($VERSION);
-
-$VERSION = '3.0612';
 
 use vars qw(%fields);
 use Carp;
@@ -235,10 +231,6 @@ sub clear {
 1;
 
 package Statistics::Descriptive::Full;
-
-use vars qw($VERSION);
-
-$VERSION = '3.0612';
 
 use Carp;
 use POSIX ();
