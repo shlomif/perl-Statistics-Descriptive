@@ -1,25 +1,220 @@
-package Statistics::Descriptive;
+package Statistics::Descriptive::Sparse;
 
 use strict;
 use warnings;
 
-##This module draws heavily from perltoot v0.4 from Tom Christiansen.
+use vars qw(%fields);
+use Carp;
+use Statistics::Descriptive::Smoother;
 
-use 5.006;
+sub _make_accessors
+{
+    my ($pkg, $methods) = @_;
 
-use vars (qw($Tolerance $Min_samples_number));
+    no strict 'refs';
+    foreach my $method (@$methods)
+    {
+        *{$pkg."::".$method} =
+            do {
+                my $m = $method;
+                sub {
+                    my $self = shift;
 
-our $VERSION = '3.0613';
+                    if (@_)
+                    {
+                        $self->{$m} = shift;
+                    }
+                    return $self->{$m};
+                };
+            };
+    }
 
-$Tolerance = 0.0;
-$Min_samples_number = 4;
+    return;
+}
 
-use Statistics::Descriptive::Sparse;
-use Statistics::Descriptive::Full;
+sub _make_private_accessors
+{
+    my ($pkg, $methods) = @_;
 
-package Statistics::Descriptive;
+    no strict 'refs';
+    foreach my $method (@$methods)
+    {
+        *{$pkg."::_".$method} =
+            do {
+                my $m = $method;
+                sub {
+                    my $self = shift;
 
-##All modules return true.
+                    if (@_)
+                    {
+                        $self->{$m} = shift;
+                    }
+                    return $self->{$m};
+                };
+            };
+    }
+
+    return;
+}
+
+##Define the fields to be used as methods
+%fields = (
+  count                 => 0,
+  mean                  => undef,
+  sum                   => undef,
+  sumsq                 => undef,
+  min                   => undef,
+  max                   => undef,
+  mindex                => undef,
+  maxdex                => undef,
+  sample_range          => undef,
+  variance              => undef,
+  );
+
+__PACKAGE__->_make_accessors( [ grep { $_ ne "variance" } keys(%fields) ] );
+__PACKAGE__->_make_accessors( ["_permitted"] );
+__PACKAGE__->_make_private_accessors(["variance"]);
+
+sub new {
+  my $proto = shift;
+  my $class = ref($proto) || $proto;
+  my $self = {
+    %fields,
+  };
+  bless ($self, $class);
+  $self->_permitted(\%fields);
+  return $self;
+}
+
+sub _is_permitted
+{
+    my $self = shift;
+    my $key = shift;
+
+    return exists($self->_permitted()->{$key});
+}
+
+sub add_data {
+    my $self = shift;  ##Myself
+    my $oldmean;
+    my ($min,$mindex,$max,$maxdex,$sum,$sumsq,$count);
+    my $aref;
+
+    if (ref $_[0] eq 'ARRAY') {
+        $aref = $_[0];
+    }
+    else {
+        $aref = \@_;
+    }
+
+    ##If we were given no data, we do nothing.
+    return 1 if (!@{ $aref });
+
+    ##Take care of appending to an existing data set
+
+    if (!defined($min = $self->min()))
+    {
+        $min = $aref->[$mindex = 0];
+    }
+    else
+    {
+        $mindex = $self->mindex();
+    }
+
+    if (!defined($max = $self->max()))
+    {
+        $max = $aref->[$maxdex = 0];
+    }
+    else
+    {
+        $maxdex = $self->maxdex();
+    }
+
+    $sum   = $self->sum();
+    $sumsq = $self->sumsq();
+    $count = $self->count();
+
+    ##Calculate new mean, sumsq, min and max;
+    foreach ( @{ $aref } ) {
+        $sum += $_;
+        $sumsq += $_**2;
+        $count++;
+        if ($_ >= $max) {
+            $max = $_;
+            $maxdex = $count-1;
+        }
+        if ($_ <= $min) {
+            $min = $_;
+            $mindex = $count-1;
+        }
+    }
+
+    $self->min($min);
+    $self->mindex($mindex);
+    $self->max($max);
+    $self->maxdex($maxdex);
+    $self->sample_range($max - $min);
+    $self->sum($sum);
+    $self->sumsq($sumsq);
+    $self->mean($sum / $count);
+    $self->count($count);
+    ##indicator the value is not cached.  Variance isn't commonly enough
+    ##used to recompute every single data add.
+    $self->_variance(undef);
+    return 1;
+}
+
+
+sub standard_deviation {
+  my $self = shift;  ##Myself
+  return undef if (!$self->count());
+  return sqrt($self->variance());
+}
+
+##Return variance; if needed, compute and cache it.
+sub variance {
+    my $self = shift;  ##Myself
+
+    my $count = $self->count();
+
+    return undef if !$count;
+
+    return 0 if $count == 1;
+
+    if (!defined($self->_variance())) {
+        my $variance = ($self->sumsq()- $count * $self->mean()**2);
+
+        # Sometimes due to rounding errors we get a number below 0.
+        # This makes sure this is handled as gracefully as possible.
+        #
+        # See:
+        #
+        # https://rt.cpan.org/Public/Bug/Display.html?id=46026
+
+        $variance = $variance < 0 ? 0 : $variance / ($count - 1);
+
+        $self->_variance($variance);
+
+        #  Return now to avoid re-entering this sub
+        #  (and therefore save time when many objects are used).
+        return $variance;
+    }
+
+    return $self->_variance();
+}
+
+##Clear a stat.  More efficient than destroying an object and calling
+##new.
+sub clear {
+  my $self = shift;  ##Myself
+  my $key;
+
+  return if (!$self->count());
+  while (my($field, $value) = each %fields) {  #  could use a slice assignment here
+    $self->{$field} = $value;
+  }
+}
+
 1;
 
 __END__
@@ -375,6 +570,10 @@ Returns the geometric mean of the data.
 Returns the mode of the data. The mode is the most commonly occuring datum.
 See L<http://en.wikipedia.org/wiki/Mode_%28statistics%29> . If all values
 occur only once, then mode() will return undef.
+
+=item $stat->sumsq()
+
+The sum of squares.
 
 =item $stat->trimmed_mean(ltrim[,utrim]);
 
