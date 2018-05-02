@@ -5,6 +5,7 @@ use warnings;
 
 use vars qw(%fields);
 use Carp;
+require Statistics::Descriptive;
 use Statistics::Descriptive::Smoother;
 
 sub _make_accessors
