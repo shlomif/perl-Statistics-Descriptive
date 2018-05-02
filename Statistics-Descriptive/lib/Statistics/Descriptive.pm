@@ -1036,12 +1036,13 @@ Statistics::Descriptive - Module of basic descriptive statistical functions.
 
 =head1 SYNOPSIS
 
-  use Statistics::Descriptive;
-  $stat = Statistics::Descriptive::Full->new();
-  $stat->add_data(1,2,3,4); $mean = $stat->mean();
-  $var  = $stat->variance();
-  $tm   = $stat->trimmed_mean(.25);
-  $Statistics::Descriptive::Tolerance = 1e-10;
+    use Statistics::Descriptive;
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data(1,2,3,4);
+    my $mean = $stat->mean();
+    my $var = $stat->variance();
+    my $tm = $stat->trimmed_mean(.25);
+    $Statistics::Descriptive::Tolerance = 1e-10;
 
 =head1 DESCRIPTION
 
