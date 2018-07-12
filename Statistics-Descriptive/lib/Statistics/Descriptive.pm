@@ -344,7 +344,7 @@ B<$Type> is an integer value between 0 to 4 :
   3 => third quartile (Q3) : upper quartile = highest cut off (25%) of data, or lowest 75% = 75th percentile
   4 => fourth quartile (Q4) : maximal value
 
-Exemple :
+Example :
 
   my @data = (1..10);
   my $stat = Statistics::Descriptive::Full->new();
@@ -372,7 +372,7 @@ Returns the geometric mean of the data.
 
 =item my $mode = $stat->mode();
 
-Returns the mode of the data. The mode is the most commonly occuring datum.
+Returns the mode of the data. The mode is the most commonly occurring datum.
 See L<http://en.wikipedia.org/wiki/Mode_%28statistics%29> . If all values
 occur only once, then mode() will return undef.
 
