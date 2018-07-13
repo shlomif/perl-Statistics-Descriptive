@@ -791,7 +791,17 @@ sub median_absolute_deviation {
     return $self->_median_absolute_deviation();
 }
 
+sub summary {
+    my ($self) = @_;
 
+    my $FMT = '%.5e';
+
+    return sprintf("Min: $FMT\nMax: $FMT\n",
+        $self->min,
+        $self->max,
+    );
+
+}
 1;
 
 __END__
@@ -1213,6 +1223,11 @@ versions of Statistics::Descriptive and using it is discouraged.
 =item $stat->median_absolute_deviation()
 
 The median absolute deviation.
+
+=item $stat->summary()
+
+Returns a textual summary of the distribution - min, max, median, mean and
+quantiles.
 
 =item $stat->least_squares_fit();
 
