@@ -15,8 +15,10 @@ install:
     - cpanm -n Dist::Zilla::Plugin::PodWeaver
     - cpanm -n Pod::Coverage::TrustPod
     - cpanm -n Pod::Weaver::Section::Support
+    - cpanm -n Test::EOL
     - cpanm -n Test::Pod
     - cpanm -n Test::Pod::Coverage
+    - cpanm -n Test::NoTabs
     - cd Statistics-Descriptive
     - dzil authordeps --missing | cpanm -n
     - dzil listdeps   --missing | cpanm -n
