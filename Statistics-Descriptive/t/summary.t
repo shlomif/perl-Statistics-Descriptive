@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More tests => 4;
 use Statistics::Descriptive;
 
 {
@@ -17,6 +17,12 @@ use Statistics::Descriptive;
 
     # TEST
     like( $summary, qr#\bMax: 2#, 'max' );
+
+    # TEST
+    like( $summary, qr#\bMean: 1#, 'mean' );
+
+    # TEST
+    like( $summary, qr#\bMedian: 1#, 'mean' );
 }
 __END__
 

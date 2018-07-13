@@ -796,9 +796,11 @@ sub summary {
 
     my $FMT = '%.5e';
 
-    return sprintf("Min: $FMT\nMax: $FMT\n",
+    return sprintf("Min: $FMT\nMax: $FMT\nMean: $FMT\nMedian: $FMT\n",
         $self->min,
         $self->max,
+        $self->mean,
+        $self->median,
     );
 
 }
