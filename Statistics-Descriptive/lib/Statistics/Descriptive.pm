@@ -9,7 +9,7 @@ use 5.006;
 
 use vars (qw($Tolerance $Min_samples_number));
 
-our $VERSION = '3.0613';
+our $VERSION = '3.0700';
 
 $Tolerance = 0.0;
 $Min_samples_number = 4;

@@ -796,11 +796,14 @@ sub summary {
 
     my $FMT = '%.5e';
 
-    return sprintf("Min: $FMT\nMax: $FMT\nMean: $FMT\nMedian: $FMT\n",
+    return sprintf("Min: $FMT\nMax: $FMT\nMean: $FMT\nMedian: $FMT\n" .
+        "1st quantile: $FMT\n3rd quantile: $FMT\n",
         $self->min,
         $self->max,
         $self->mean,
         $self->median,
+        $self->quantile(1),
+        $self->quantile(3),
     );
 
 }
@@ -1230,6 +1233,8 @@ The median absolute deviation.
 
 Returns a textual summary of the distribution - min, max, median, mean and
 quantiles.
+
+(New in version 3.0700 .)
 
 =item $stat->least_squares_fit();
 

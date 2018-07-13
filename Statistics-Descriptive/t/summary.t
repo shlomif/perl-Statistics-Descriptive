@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use Test::More tests => 6;
 use Statistics::Descriptive;
 
 {
@@ -23,6 +23,12 @@ use Statistics::Descriptive;
 
     # TEST
     like( $summary, qr#\bMedian: 1#, 'mean' );
+
+    # TEST
+    like( $summary, qr#\b1st quantile: 5#, 'quantile' );
+
+    # TEST
+    like( $summary, qr#\b3rd quantile: 1#, 'quantile' );
 }
 __END__
 
