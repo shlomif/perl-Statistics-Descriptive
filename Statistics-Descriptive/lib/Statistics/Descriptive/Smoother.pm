@@ -5,7 +5,7 @@ use warnings;
 
 use Carp;
 
-our $VERSION = '3.0701';
+our $VERSION = '3.0702';
 
 sub instantiate {
     my ($class, $args) = @_;
