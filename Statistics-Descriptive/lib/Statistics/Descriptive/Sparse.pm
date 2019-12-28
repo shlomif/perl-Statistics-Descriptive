@@ -139,7 +139,7 @@ sub add_data {
     foreach ( @{ $aref } ) {
         $sum += $_;
         $sumsq += $_**2;
-        $count++;
+        ++$count;
         if ($_ >= $max) {
             $max = $_;
             $maxdex = $count-1;

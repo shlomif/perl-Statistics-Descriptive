@@ -431,8 +431,8 @@ sub _real_calc_trimmed_mean
     {
         $val = $self->_data()->[$index];
         $oldmean = $tm_mean;
-        $index++;
-        $tm_count++;
+        ++$index;
+        ++$tm_count;
         $tm_mean += ($val - $oldmean) / $tm_count;
     }
 
@@ -746,7 +746,7 @@ sub least_squares_fit {
     $sigmaxx += $x * $x;
     $sigmaxy += $x * $y;
     $sigmax  += $x;
-    $iter++;
+    ++$iter;
   }
   $denom = $count * $sigmaxx - $sigmax*$sigmax;
   return ()
@@ -768,7 +768,7 @@ sub least_squares_fit {
     ##Error = Real y - calculated y
     $err = $self->_data->[$iter] - ( $m * $_ + $q );
     $rms += $err*$err;
-    $iter++;
+    ++$iter;
   }
 
   $rms = sqrt($rms / $count);
