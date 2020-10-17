@@ -9,13 +9,11 @@ use 5.006;
 
 use vars (qw($Tolerance $Min_samples_number));
 
-our $VERSION = '3.0702';
-
-$Tolerance = 0.0;
+$Tolerance          = 0.0;
 $Min_samples_number = 4;
 
-use Statistics::Descriptive::Sparse;
-use Statistics::Descriptive::Full;
+use Statistics::Descriptive::Sparse ();
+use Statistics::Descriptive::Full   ();
 
 package Statistics::Descriptive;
 

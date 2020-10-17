@@ -3,45 +3,54 @@ package Statistics::Descriptive::Smoother;
 use strict;
 use warnings;
 
-use Carp;
+use Carp qw/ carp /;
 
-our $VERSION = '3.0702';
+## no critic (ProhibitExplicitReturnUndef)
 
-sub instantiate {
-    my ($class, $args) = @_;
+sub instantiate
+{
+    my ( $class, $args ) = @_;
 
     my $method     = delete $args->{method};
     my $coeff      = delete $args->{coeff} || 0;
     my $ra_samples = delete $args->{samples};
     my $ra_data    = delete $args->{data};
 
-    if ($coeff < 0 || $coeff > 1) {
+    if ( $coeff < 0 || $coeff > 1 )
+    {
         carp("Invalid smoothing coefficient C $coeff\n");
         return;
     }
-    if (@$ra_data < 2) {
+    if ( @$ra_data < 2 )
+    {
         carp("Need at least 2 samples to smooth the data\n");
         return;
     }
-    $method = ucfirst(lc($method));
-    my $sub_class = __PACKAGE__."::$method";
+    $method = ucfirst( lc($method) );
+    my $sub_class = __PACKAGE__ . "::$method";
+    ## no critic
     eval "require $sub_class";
+    ## use critic
     die "No such class $sub_class: $@" if $@;
 
-    return $sub_class->_new({
-        data       => $ra_data,
-        samples    => $ra_samples,
-        count      => scalar @$ra_data,
-        coeff      => $coeff,
-    });
+    return $sub_class->_new(
+        {
+            data    => $ra_data,
+            samples => $ra_samples,
+            count   => scalar @$ra_data,
+            coeff   => $coeff,
+        }
+    );
 }
 
 sub get_smoothing_coeff { $_[0]->{coeff} }
 
-sub set_smoothing_coeff {
-    my ($self, $coeff) = @_;
+sub set_smoothing_coeff
+{
+    my ( $self, $coeff ) = @_;
 
-    if ($coeff < 0 || $coeff > 1) {
+    if ( $coeff < 0 || $coeff > 1 )
+    {
         carp("Invalid smoothing coefficient C $coeff\n");
         return;
     }

@@ -1,27 +1,30 @@
 package Statistics::Descriptive::Smoother::Exponential;
+
 use strict;
 use warnings;
 
-use base 'Statistics::Descriptive::Smoother';
+use parent 'Statistics::Descriptive::Smoother';
 
-our $VERSION = '3.0702';
-
-sub _new {
-    my ($class, $args) = @_;
+sub _new
+{
+    my ( $class, $args ) = @_;
 
     return bless $args || {}, $class;
 }
 
 # The name of the variables used in the code refers to the explanation in the pod
-sub get_smoothed_data {
+sub get_smoothed_data
+{
     my ($self) = @_;
 
     my @smoothed_values;
-    push @smoothed_values, @{$self->{data}}[0];
+    push @smoothed_values, @{ $self->{data} }[0];
     my $C = $self->get_smoothing_coeff();
 
-    foreach my $sample_idx (1 .. $self->{count} -1) {
-        my $smoothed_value = $C * ($smoothed_values[-1]) + (1 - $C) * $self->{data}->[$sample_idx];
+    foreach my $sample_idx ( 1 .. $self->{count} - 1 )
+    {
+        my $smoothed_value = $C * ( $smoothed_values[-1] ) +
+            ( 1 - $C ) * $self->{data}->[$sample_idx];
         push @smoothed_values, $smoothed_value;
     }
     return @smoothed_values;

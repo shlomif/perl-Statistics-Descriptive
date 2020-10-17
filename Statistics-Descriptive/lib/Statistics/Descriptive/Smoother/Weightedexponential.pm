@@ -1,16 +1,17 @@
 package Statistics::Descriptive::Smoother::Weightedexponential;
+
 use strict;
 use warnings;
 
-use Carp;
-use base 'Statistics::Descriptive::Smoother';
+use Carp qw/ carp /;
+use parent 'Statistics::Descriptive::Smoother';
 
-our $VERSION = '3.0702';
+sub _new
+{
+    my ( $class, $args ) = @_;
 
-sub _new {
-    my ($class, $args) = @_;
-
-    if (scalar @{$args->{data}} != scalar @{$args->{samples}}) {
+    if ( scalar @{ $args->{data} } != scalar @{ $args->{samples} } )
+    {
         carp("Number of data values and samples need to be the same\n");
         return;
     }
@@ -19,55 +20,63 @@ sub _new {
 }
 
 # The name of the variables used in the code refers to the explanation in the pod
-sub get_smoothed_data {
+sub get_smoothed_data
+{
     my ($self) = @_;
 
-    my (@smoothed_values, @Wts);
+    my ( @smoothed_values, @Wts );
+
     # W(0) = N(0)
-    push @Wts, @{$self->{samples}}[0];
+    push @Wts, @{ $self->{samples} }[0];
+
     # S(0) = X(0)
-    push @smoothed_values, @{$self->{data}}[0];
+    push @smoothed_values, @{ $self->{data} }[0];
     my $C = $self->get_smoothing_coeff();
 
-    foreach my $idx (1 .. ($self->{count} -1)) {
+    foreach my $idx ( 1 .. ( $self->{count} - 1 ) )
+    {
         my $Xt   = $self->{data}->[$idx];
         my $Nt   = $self->{samples}->[$idx];
         my $St_1 = $smoothed_values[-1];
         my $Wt_1 = $Wts[-1];
 
-        push @Wts, $self->_get_Wt($Wt_1, $Nt);
+        push @Wts, $self->_get_Wt( $Wt_1, $Nt );
 
-        my $coeff_a = $self->_get_coeff_A($Wt_1, $Nt);
-        my $coeff_b = $self->_get_coeff_B($Wt_1, $Nt);
+        my $coeff_a = $self->_get_coeff_A( $Wt_1, $Nt );
+        my $coeff_b = $self->_get_coeff_B( $Wt_1, $Nt );
 
-        my $smoothed_value = ( $St_1 * $coeff_a + $Xt * $coeff_b ) / ( $coeff_a + $coeff_b );
+        my $smoothed_value =
+            ( $St_1 * $coeff_a + $Xt * $coeff_b ) / ( $coeff_a + $coeff_b );
         push @smoothed_values, $smoothed_value;
     }
     return @smoothed_values;
 }
 
-sub _get_Wt {
-    my ($self, $Wt_1, $Nt) = @_;
+sub _get_Wt
+{
+    my ( $self, $Wt_1, $Nt ) = @_;
 
-    my $C = $self->get_smoothing_coeff();
-    my $coeff_a = $self->_get_coeff_A($Wt_1, $Nt);
-    my $coeff_b = $self->_get_coeff_B($Wt_1, $Nt);;
+    my $C       = $self->get_smoothing_coeff();
+    my $coeff_a = $self->_get_coeff_A( $Wt_1, $Nt );
+    my $coeff_b = $self->_get_coeff_B( $Wt_1, $Nt );
 
-    return (($Wt_1 * $coeff_a + $Nt * $coeff_b)/($coeff_a + $coeff_b));
+    return ( ( $Wt_1 * $coeff_a + $Nt * $coeff_b ) / ( $coeff_a + $coeff_b ) );
 }
 
-sub _get_coeff_A {
-    my ($self, $Wt_1, $Nt) = @_;
+sub _get_coeff_A
+{
+    my ( $self, $Wt_1, $Nt ) = @_;
 
     my $C = $self->get_smoothing_coeff();
-    return $C * ( $Wt_1 / ($Wt_1 + $Nt) );
+    return $C * ( $Wt_1 / ( $Wt_1 + $Nt ) );
 }
 
-sub _get_coeff_B {
-    my ($self, $Wt_1, $Nt) = @_;
+sub _get_coeff_B
+{
+    my ( $self, $Wt_1, $Nt ) = @_;
 
     my $C = $self->get_smoothing_coeff();
-    return (1 - $C) * ( $Nt / ($Nt + $Wt_1) );
+    return ( 1 - $C ) * ( $Nt / ( $Nt + $Wt_1 ) );
 }
 
 1;
