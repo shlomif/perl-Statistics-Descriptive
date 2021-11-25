@@ -29,7 +29,7 @@ __PACKAGE__->_make_private_accessors(
         qw(data samples frequency geometric_mean harmonic_mean
             least_squares_fit median mode
             skewness kurtosis median_absolute_deviation
-            )
+        )
     ]
 );
 __PACKAGE__->_make_accessors( [qw(presorted _reserved _trimmed_mean_cache)] );
