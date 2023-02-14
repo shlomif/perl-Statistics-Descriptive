@@ -232,7 +232,7 @@ might be useful for complex filters where statistics property are needed (again 
 =item $stat->set_smoother({ method => 'exponential', coeff => 0, });
 
 Set the method used to smooth the data and the smoothing coefficient.
-See C<Statistics::Smoother> for more details.
+See C<Statistics::Descriptive::Smoother> for more details.
 
 =item $stat->get_smoothed_data();
 
